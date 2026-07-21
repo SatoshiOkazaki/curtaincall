@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CurtainCall — データ取込を完全自動化</title>
+<meta name="description" content="婚礼当日エンドロールのためのSDカード取り込み自動化アプリ。カードを挿すだけで検出・コピー・検証まで全自動。ワンボタンでDaVinci Resolve / Premiere Proのビンへ。" />
+<meta property="og:title" content="CurtainCall — データ取込を完全自動化" />
+<meta property="og:description" content="素材管理、フォルダ作成、ソフト取込、マルチカムの並び替え、カード取り出し作業。全て不要。" />
+<style>
+  :root {
+    color-scheme: dark;
+    --stage: #0c0e13;        /* 舞台の闇 */
+    --stage-lift: #12151d;   /* 一段明るい床 */
+    --curtain: #a3232e;      /* 緞帳 */
+    --curtain-lit: #c73340;  /* 照明の当たった襞 */
+    --gold: #c9a04e;         /* 金襴 */
+    --light: #f2e9d8;        /* タングステンの白 */
+    --dim: #8e93a0;          /* 影の中の文字 */
+    --line: #232732;         /* 罫 */
+    --ok: #35c46a;           /* 検証グリーン（製品と同一） */
+    --amber: #e8a13a;        /* 進行中 */
+    --serif: "Hiragino Mincho ProN", "Yu Mincho", "BIZ UDMincho", "Noto Serif JP", serif;
+    --sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono: "SF Mono", ui-monospace, "Menlo", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* 暗い舞台という一貫した世界観のため、閲覧側のテーマに関わらず地色を固定する */
+  html, :root[data-theme="light"], :root[data-theme="dark"] {
+    background: var(--stage);
+    color-scheme: dark;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--stage);
+    color: var(--light);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  ::selection { background: var(--curtain); color: var(--light); }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .narrow { max-width: 680px; }
+
+  /* ---------- 緞帳ヒーロー ---------- */
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 96px 24px 72px;
+  }
+  /* 幕：左右から襞のグラデーション */
+  .hero::before, .hero::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: clamp(40px, 14vw, 190px);
+    background:
+      repeating-linear-gradient(90deg,
+        var(--curtain) 0 14px,
+        #7d1a24 14px 26px,
+        var(--curtain-lit) 26px 34px,
+        var(--curtain) 34px 52px);
+    box-shadow: 0 0 60px rgba(0,0,0,.8) inset;
+    z-index: 0;
+  }
+  .hero::before { left: 0; border-right: 1px solid rgba(0,0,0,.6); }
+  .hero::after  { right: 0; border-left: 1px solid rgba(0,0,0,.6); }
+  /* 金のバトンと薄いスポットライト */
+  .rod {
+    position: absolute; top: 0; left: 0; right: 0; height: 6px;
+    background: linear-gradient(180deg, #e0bd72, var(--gold) 60%, #8a6a2c);
+    z-index: 2;
+  }
+  .spot {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 46% 60% at 50% 74%, rgba(242,233,216,.10), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 720px; }
+  /* ---------- ロゴ：金の筆記体（静止・テクスチャ装飾つき） ---------- */
+  .logo-plate {
+    position: relative;
+    display: inline-block;
+    margin-top: 22px;
+    padding: 26px 42px 30px;
+    isolation: isolate;
+  }
+  /* 刷毛目のゴールドテクスチャ。中心から外へ溶けるようマスク */
+  .logo-plate::before {
+    content: "";
+    position: absolute;
+    inset: -10% -12%;
+    z-index: -2;
+    background:
+      repeating-linear-gradient(104deg,
+        rgba(122, 92, 36, .16) 0 3px,
+        rgba(201, 160, 78, .13) 3px 5px,
+        rgba(255, 246, 222, .09) 5px 6px,
+        rgba(122, 92, 36, .16) 6px 10px);
+    -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 50%, #000 18%, rgba(0,0,0,.55) 48%, transparent 76%);
+    mask-image: radial-gradient(ellipse 58% 62% at 50% 50%, #000 18%, rgba(0,0,0,.55) 48%, transparent 76%);
+  }
+  /* テクスチャの上に敷く金色の光だまり */
+  .logo-plate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(ellipse 55% 58% at 50% 52%, rgba(201, 160, 78, .18), transparent 72%);
+  }
+  .wordmark {
+    font-family: "Didot", "Didot LT STD", "Bodoni 72", "Bodoni MT", "Playfair Display", Georgia, serif;
+    font-style: italic;
+    font-size: clamp(52px, 10vw, 104px);
+    font-weight: 400;
+    letter-spacing: .015em;
+    line-height: 1.28;
+    /* descenderが切れないよう上下に逃げを作る */
+    padding: .08em .12em .16em;
+    /* ハイライトは中央やや右の1箇所。全体を明るめの金で通す */
+    background: linear-gradient(102deg,
+      #b08c3d 0%,
+      #d3b466 16%,
+      #e9d49a 34%,
+      #f6ecca 50%,
+      #fffef9 59%,
+      #f2e3ba 68%,
+      #dcbb72 82%,
+      #c19c4a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter:
+      drop-shadow(0 1px 0 rgba(90, 66, 22, .55))
+      drop-shadow(0 4px 30px rgba(201, 160, 78, .30));
+  }
+  /* 装飾のきらめき（4点星） */
+  .sparkle {
+    position: absolute;
+    z-index: 1;
+    background: linear-gradient(160deg, #fffdf2, #e8cf8d 45%, rgba(201, 160, 78, 0));
+    clip-path: polygon(50% 0%, 57% 43%, 100% 50%, 57% 57%, 50% 100%, 43% 57%, 0% 50%, 43% 43%);
+    filter: drop-shadow(0 0 6px rgba(255, 240, 200, .65));
+    pointer-events: none;
+  }
+  .sp1 { width: 20px; height: 20px; top: 12%;  left: 3%;   opacity: .95; }
+  .sp2 { width: 11px; height: 11px; top: 2%;   left: 30%;  opacity: .7; }
+  .sp3 { width: 26px; height: 26px; top: 6%;   right: 4%;  opacity: 1; }
+  .sp4 { width: 9px;  height: 9px;  bottom: 16%; right: 22%; opacity: .6; }
+  .sp5 { width: 14px; height: 14px; bottom: 6%;  left: 16%; opacity: .8; }
+  /* 狭い画面では緞帳に文字が寄りすぎるので一段小さく */
+  @media (max-width: 480px) {
+    .wordmark { font-size: 42px; }
+    .logo-plate { padding: 20px 26px 24px; }
+    .sp1 { width: 15px; height: 15px; }
+    .sp3 { width: 19px; height: 19px; }
+  }
+  .tagline {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    letter-spacing: .18em;
+    color: var(--light);
+  }
+  .tagline::before, .tagline::after {
+    content: "";
+    width: clamp(16px, 5vw, 30px);
+    height: 1px;
+    background: var(--gold);
+    opacity: .75;
+    flex: none;
+  }
+  .lede {
+    font-family: var(--serif);
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 600;
+    letter-spacing: .1em;
+    line-height: 1.5;
+    color: #fffdf6;
+    margin: 26px 0 18px;
+    text-wrap: balance;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, .6);
+  }
+  /* コピーの下に金の細線を短く引いて視線を止める */
+  .lede::after {
+    content: "";
+    display: block;
+    width: 74px;
+    height: 1px;
+    margin: 20px auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .sub {
+    color: var(--dim);
+    font-size: 15px;
+    max-width: 34em;
+    margin: 0 auto;
+  }
+  /* ヒーローのサブコピーは1行目を折り返さず見せる */
+  .hero .sub { max-width: 42em; }
+
+  /* ---------- 「全て不要」対比ブロック ---------- */
+  .unneeded {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(22px, 5vw, 46px);
+    width: fit-content;
+    margin: 30px auto 0;
+    text-align: left;
+  }
+  .unneeded-list { list-style: none; display: grid; gap: 7px; }
+  .unneeded-list li {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: var(--dim);
+    font-size: 14.5px;
+    letter-spacing: .04em;
+    line-height: 1.55;
+  }
+  /* 自動でチェック済み＝手を離してよい合図。線だけのチェック */
+  .unneeded-list li::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    flex: none;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M3.5 10.6 L7.8 14.8 L16.5 4.6' fill='none' stroke='%23f2e9d8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat;
+  }
+  /* 判決のように据える小さな金の額 */
+  .unneeded-verdict {
+    position: relative;
+    font-family: var(--serif);
+    font-size: clamp(19px, 2.8vw, 25px);
+    letter-spacing: .2em;
+    text-indent: .2em; /* 字間ぶんの右寄りを相殺 */
+    color: var(--light);
+    white-space: nowrap;
+    margin-left: clamp(22px, 5vw, 44px);
+    padding: 15px 26px 16px;
+    border: 1px solid rgba(201, 160, 78, .55);
+    background:
+      linear-gradient(180deg, rgba(201,160,78,.14), rgba(201,160,78,.03));
+    box-shadow:
+      inset 0 0 26px rgba(201, 160, 78, .10),
+      0 6px 26px rgba(0, 0, 0, .45);
+  }
+  /* 四隅の金のコーナー飾り */
+  .unneeded-verdict::before,
+  .unneeded-verdict::after {
+    content: "";
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--gold);
+  }
+  .unneeded-verdict::before {
+    top: -4px; left: -4px;
+    border-right: 0; border-bottom: 0;
+  }
+  .unneeded-verdict::after {
+    bottom: -4px; right: -4px;
+    border-left: 0; border-top: 0;
+  }
+  @media (max-width: 560px) {
+    .unneeded { flex-direction: column; gap: 26px; }
+    .unneeded-verdict {
+      margin-left: 0;
+      align-self: center;
+      text-align: center;
+    }
+  }
+  .cta-row { margin-top: 44px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 14px 30px;
+    font-size: 15px;
+    letter-spacing: .12em;
+    text-decoration: none;
+    border-radius: 3px;
+  }
+  .btn-primary {
+    background: var(--curtain);
+    color: var(--light);
+    border: 1px solid var(--curtain-lit);
+  }
+  .btn-primary:hover { background: var(--curtain-lit); }
+  .btn-ghost {
+    color: var(--gold);
+    border: 1px solid rgba(201,160,78,.5);
+  }
+  .btn-ghost:hover { border-color: var(--gold); }
+  .hero-note { margin-top: 22px; font-size: 12.5px; color: var(--dim); letter-spacing: .06em; }
+
+  /* ---------- 章立て共通 ---------- */
+  section { padding: 96px 0; }
+  section + section { border-top: 1px solid var(--line); }
+  .kicker {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 12px; letter-spacing: .3em;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+  .kicker::before { content: ""; width: 34px; height: 1px; background: var(--gold); }
+  h2 {
+    font-family: var(--serif);
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 600;
+    letter-spacing: .05em;
+    line-height: 1.5;
+    margin-bottom: 26px;
+    text-wrap: balance;
+  }
+  /* 見出しに続けて置く同書体のサブコピー */
+  h2:has(+ .h2-sub) { margin-bottom: 14px; }
+  .h2-sub {
+    font-family: var(--serif);
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 600;
+    letter-spacing: .05em;
+    line-height: 1.5;
+    color: var(--light);
+    margin-bottom: 30px;
+    text-wrap: balance;
+  }
+  .prose { color: #c9cdd6; max-width: 40em; }
+  .prose strong { color: var(--light); }
+
+  /* ---------- 動くモック ---------- */
+  .demo-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; margin-top: 42px; }
+  @media (max-width: 800px) { .demo-grid { grid-template-columns: 1fr; } }
+  .mock {
+    background: #10131a;
+    border: 1px solid #262b37;
+    border-radius: 10px;
+    padding: 22px 22px 26px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    font-size: 14px;
+  }
+  .mock-titlebar { display: flex; gap: 7px; margin-bottom: 20px; }
+  .mock-titlebar i { width: 11px; height: 11px; border-radius: 50%; background: #2c3140; }
+  .mock-card {
+    background: #171b24;
+    border: 1px solid #2a3040;
+    border-left: 4px solid var(--curtain-lit);
+    border-radius: 8px;
+    padding: 18px;
+    position: relative;
+  }
+  .mock-head { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+  .mock-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--curtain-lit); }
+  .mock-state { margin-left: auto; font-size: 12.5px; font-weight: 700; position: relative; width: 7em; height: 1.6em; }
+  .mock-state span { position: absolute; right: 0; top: 0; opacity: 0; animation: 9s infinite; }
+  .st-detect  { color: var(--dim);  animation-name: ph-detect !important; }
+  .st-copy    { color: var(--amber); animation-name: ph-copy !important; }
+  .st-verify  { color: var(--amber); animation-name: ph-verify !important; }
+  .st-safe    { color: var(--ok);   animation-name: ph-safe !important; }
+  .mock-file { font-family: var(--mono); font-size: 12px; color: var(--dim); margin: 14px 0 10px; }
+  .mock-track { height: 10px; border-radius: 5px; background: #232936; overflow: hidden; }
+  .mock-fill {
+    height: 100%; width: 0; border-radius: 5px;
+    background: var(--amber);
+    animation: ph-fill 9s infinite;
+  }
+  .mock-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim); margin-top: 10px; font-variant-numeric: tabular-nums; }
+  .mock-eject {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: var(--ok);
+    border: 1px dashed rgba(53,196,106,.5);
+    border-radius: 8px;
+    padding: 10px;
+    opacity: 0;
+    animation: ph-safe 9s infinite;
+  }
+  @keyframes ph-detect { 0%,4% {opacity:0} 5%,17% {opacity:1} 18%,100% {opacity:0} }
+  @keyframes ph-copy   { 0%,17% {opacity:0} 18%,55% {opacity:1} 56%,100% {opacity:0} }
+  @keyframes ph-verify { 0%,55% {opacity:0} 56%,69% {opacity:1} 70%,100% {opacity:0} }
+  @keyframes ph-safe   { 0%,69% {opacity:0} 71%,96% {opacity:1} 98%,100% {opacity:0} }
+  @keyframes ph-fill   { 0%,17% {width:0} 55% {width:100%} 69% {width:100%} 96% {width:100%} 100% {width:100%} }
+  .demo-steps { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+  .demo-steps li { display: flex; gap: 16px; font-size: 15px; }
+  .demo-steps b { color: var(--gold); font-family: var(--serif); font-size: 18px; flex: none; }
+  .demo-steps p { color: var(--dim); font-size: 13.5px; margin-top: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    .mock-fill { animation: none; width: 100%; background: var(--ok); }
+    .mock-state span { animation: none !important; }
+    .mock-state .st-safe { opacity: 1; }
+    .mock-eject { animation: none; opacity: 1; }
+  }
+
+  /* ---------- 機能 ---------- */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 34px 44px; margin-top: 46px; }
+  .feature h3 { font-size: 16.5px; letter-spacing: .03em; margin-bottom: 8px; }
+  .feature h3::before { content: "─ "; color: var(--gold); }
+  .feature p { font-size: 14px; color: var(--dim); }
+
+  /* ---------- 安心 ---------- */
+  .vow {
+    border: 1px solid rgba(201,160,78,.35);
+    padding: 44px 40px;
+    margin-top: 42px;
+  }
+  .vow p { font-family: var(--serif); font-size: 18px; letter-spacing: .05em; line-height: 2.2; }
+  .vow ul { margin-top: 22px; list-style: none; }
+  .vow li { font-size: 14px; color: var(--dim); padding-left: 1.4em; text-indent: -1.4em; line-height: 2.1; }
+  .vow li::before { content: "✓ "; color: var(--ok); font-weight: 700; }
+
+  /* ---------- 動作環境 ---------- */
+  .env { width: 100%; border-collapse: collapse; margin-top: 38px; font-size: 14.5px; }
+  .env th, .env td { text-align: left; padding: 15px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .env th { color: var(--gold); font-weight: 600; width: 11em; letter-spacing: .06em; font-size: 13px; }
+  .env td { color: #c9cdd6; }
+  .env .soon { color: var(--dim); font-size: 12.5px; }
+
+  /* ---------- 開発者 ---------- */
+  .maker { display: flex; gap: 26px; align-items: flex-start; margin-top: 40px; }
+  .maker-mark {
+    flex: none; width: 54px; height: 54px; border-radius: 6px;
+    background:
+      linear-gradient(180deg, #e0bd72, var(--gold) 12%, transparent 12%),
+      repeating-linear-gradient(90deg, var(--curtain) 0 6px, var(--curtain-lit) 6px 9px, var(--curtain) 9px 14px);
+    border: 1px solid #2a3040;
+  }
+  .maker p { font-size: 15px; color: #c9cdd6; max-width: 36em; }
+  .maker .name { display: block; margin-top: 14px; color: var(--dim); font-size: 13px; letter-spacing: .08em; }
+
+  /* ---------- FAQ ---------- */
+  .faq { margin-top: 36px; }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 20px 4px;
+    font-size: 15.5px;
+    font-weight: 600;
+    letter-spacing: .03em;
+  }
+  .faq summary::before { content: "＋ "; color: var(--gold); }
+  .faq details[open] summary::before { content: "－ "; }
+  .faq summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .faq .a { padding: 0 4px 22px; font-size: 14px; color: var(--dim); max-width: 44em; }
+
+  /* ---------- フッター ---------- */
+  .finale {
+    text-align: center;
+    padding: 110px 24px 60px;
+    border-top: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .finale::before {
+    content: "";
+    position: absolute; inset: auto 0 0 0; height: 240px;
+    background: radial-gradient(ellipse 50% 100% at 50% 100%, rgba(163,35,46,.18), transparent 70%);
+    pointer-events: none;
+  }
+  .finale h2 { margin-bottom: 14px; }
+  .finale .sub { margin-bottom: 40px; }
+  .foot {
+    padding: 26px 24px 34px;
+    text-align: center;
+    color: #5a5f6b;
+    font-size: 12px;
+    letter-spacing: .08em;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="rod" aria-hidden="true"></div>
+  <div class="spot" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <p class="tagline">撮って出しエンドロール専用設計</p>
+    <div class="logo-plate">
+      <i class="sparkle sp1" aria-hidden="true"></i>
+      <i class="sparkle sp2" aria-hidden="true"></i>
+      <i class="sparkle sp3" aria-hidden="true"></i>
+      <i class="sparkle sp4" aria-hidden="true"></i>
+      <i class="sparkle sp5" aria-hidden="true"></i>
+      <h1 class="wordmark">CurtainCall</h1>
+    </div>
+    <p class="lede">データ取込を完全自動化</p>
+    <div class="unneeded">
+      <ul class="unneeded-list">
+        <li>素材管理</li>
+        <li>フォルダ作成</li>
+        <li>ソフト取込</li>
+        <li>マルチカムの並び替え</li>
+        <li>カード取り出し作業</li>
+      </ul>
+      <p class="unneeded-verdict">全て不要</p>
+    </div>
+    <div class="cta-row">
+      <!-- TODO: β版の配布URLに差し替え -->
+      <a class="btn btn-primary" href="#beta">β版をダウンロード</a>
+      <a class="btn btn-ghost" href="#features">機能を見る</a>
+    </div>
+    <p class="hero-note">SONY α（XAVC）対応 ／ DaVinci Resolve Studio・Premiere Pro 連携 ／ macOS・Windows（開発中）</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">HOW IT FEELS</p>
+    <h2>カードを挿す。音が鳴ったら、抜くだけ。</h2>
+    <p class="h2-sub">編集画面から一時も目を離さずに完結。</p>
+    <div class="demo-grid">
+      <div class="mock" role="img" aria-label="CurtainCallの取り込み画面。カードを検出し、コピーと検証が進み、完了すると『抜いてOK』と表示される。">
+        <div class="mock-titlebar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="mock-card">
+          <div class="mock-head">
+            <span class="mock-dot"></span>
+            <span>Acam</span>
+            <span class="mock-state">
+              <span class="st-detect">検出しました</span>
+              <span class="st-copy">コピー中</span>
+              <span class="st-verify">検証中</span>
+              <span class="st-safe">完了</span>
+            </span>
+          </div>
+          <p class="mock-file">20260714_Z2_5279.MP4</p>
+          <div class="mock-track"><div class="mock-fill"></div></div>
+          <div class="mock-meta"><span>12.4 GB</span><span>2/5 クリップ</span></div>
+          <div class="mock-eject">⏏ 抜いてOK</div>
+        </div>
+      </div>
+      <ol class="demo-steps">
+        <li><b>壱</b><div>カードを挿すと自動で検出。<p>カメラ別に自動でフォルダを作成、コピー開始。</p></div></li>
+        <li><b>弐</b><div>新しく撮った分だけをコピー。<p>継ぎ足し撮影でも未取込み分のデータだけを新規フォルダにコピー。</p></div></li>
+        <li><b>参</b><div>完了音が鳴り、「⏏ 抜いてOK」。<p>コピー検証まで完全自動。カードの取り出し操作も不要です。</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <p class="kicker">FEATURES</p>
+    <h2>現場で本当に要るものだけを、削って残した。</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>カメラの個体を自動判別</h3>
+        <p>カードの中身からカメラ1台1台を識別。同じ機種を2台使っていても、手持ちとジンバルを取り違えません。フォルダは「Acam_1」のようにカメラ別連番で自動整理。</p>
+      </div>
+      <div class="feature">
+        <h3>差分だけを取り込む</h3>
+        <p>同じカードを挿し直しても、前回までの取り込み分は自動でスキップ。シーンごとにフォーマットしない運用ができ、カード管理そのものが要らなくなります。</p>
+      </div>
+      <div class="feature">
+        <h3>検証してから「抜いてOK」</h3>
+        <p>全ファイルをチェックサムで検証し、合格するまで完了表示を出しません。「コピーできたはず」を「できた」に変える仕組みです。</p>
+      </div>
+      <div class="feature">
+        <h3>カードには指一本ふれない</h3>
+        <p>カードへのアクセスは読み取り専用。書き込み・削除・フォーマットを行うコードは存在しません。大切な原本を、構造的に守ります。</p>
+      </div>
+      <div class="feature">
+        <h3>編集を止めない進捗表示</h3>
+        <p>画面右下に小さな進捗ウィンドウ。編集ソフトを最大化したまま、耳と視界の端だけで取り込み状況を把握できます。</p>
+      </div>
+      <div class="feature">
+        <h3>ワンボタンで編集ソフトへ</h3>
+        <p>「取り込み」ボタンひとつで、DaVinci Resolve / Premiere Proにビンを作って素材を流し込み。タイムコード順に並べて、すぐ編集を始められます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow">
+    <p class="kicker">OUR VOW</p>
+    <h2>いちばん大切な約束。</h2>
+    <div class="vow">
+      <p>おふたりの一日は、撮り直せない。<br />だからこのアプリは、速さより先に「消えないこと」を設計しました。</p>
+      <ul>
+        <li>カードへのアクセスは読み取りのみ。消去・初期化の機能を持ちません</li>
+        <li>コピーは全件チェックサム検証。合格するまで「抜いてOK」を表示しません</li>
+        <li>取り込みの記録は案件フォルダに保存。アプリを閉じても履歴は残ります</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow">
+    <p class="kicker">REQUIREMENTS</p>
+    <h2>動作環境</h2>
+    <table class="env">
+      <tr><th>対応OS</th><td>macOS（Apple Silicon / M1以降）<br /><span class="soon">Windows版は開発中。βテスター登録で開始時にご案内します</span></td></tr>
+      <tr><th>カメラ</th><td>SONY αシリーズ（XAVC記録／a7SIII・a7IVで検証済み）<br /><span class="soon">Panasonic・Canonは対応作業中</span></td></tr>
+      <tr><th>メディア</th><td>SDカード／CFexpress Type A（カードリーダーは問いません）</td></tr>
+      <tr><th>編集ソフト</th><td>DaVinci Resolve Studio（外部スクリプティング有効）<br />Premiere Pro 2020以降（付属の連携パネルをボタンひとつで導入）</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow">
+    <p class="kicker">MAKER</p>
+    <h2>つくったのは、現場の人間です。</h2>
+    <div class="maker">
+      <div class="maker-mark" aria-hidden="true"></div>
+      <p>CurtainCallは、いまも毎週末カメラを回している婚礼映像クリエイターが、自分の現場の「間に合わないかもしれない」を消すために作ったツールです。機能はすべて、実際の挙式で使いながら磨いています。
+      <span class="name">Zmotons 岡崎 聡<!-- TODO: X等のリンクを追加 --></span></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow">
+    <p class="kicker">FAQ</p>
+    <h2>よくある質問</h2>
+    <div class="faq">
+      <details>
+        <summary>無償版のDaVinci Resolveでも使えますか？</summary>
+        <p class="a">取り込み・検証・フォルダ整理はすべて使えます。Resolveへの自動読み込みのみ、外部連携APIを持つStudio版が必要です（無償版の方は取り込み後のフォルダをドラッグしてください）。</p>
+      </details>
+      <details>
+        <summary>Windowsでは使えますか？</summary>
+        <p class="a">Windows版を開発中です。βテスターとしてご登録いただくと、Windows版のテスト開始時に優先してご案内します。現行版はmacOS（Apple Silicon / M1以降）で動作します。</p>
+      </details>
+      <details>
+        <summary>SONY以外のカメラは使えますか？</summary>
+        <p class="a">現在はSONY αシリーズ（XAVC）に対応しています。PanasonicとCanonは対応作業中で、実機データでの検証を進めています。お使いの機種での対応を急いでほしい方は、ぜひテスターとしてご連絡ください。</p>
+      </details>
+      <details>
+        <summary>カードのデータが消える心配はありませんか？</summary>
+        <p class="a">アプリはカードに対して読み取り専用でアクセスし、書き込み・削除・フォーマットは一切行いません。また、コピーは全件をチェックサムで検証し、合格するまで「抜いてOK」を表示しません。カードの初期化は、これまで通りご自身のカメラで行ってください。</p>
+      </details>
+      <details>
+        <summary>価格はいくらですか？</summary>
+        <p class="a">β期間中は無料でお使いいただけます。正式版は買い切り（サブスクなし）を予定しています。価格は近日発表します。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer class="finale" id="beta">
+  <h2>幕が上がる前に、準備は終わっている。</h2>
+  <p class="sub">現在、先行テスターを募集しています。現場で使った感想をいただける方に、正式版を優先価格でご案内します。</p>
+  <div class="cta-row">
+    <!-- TODO: 応募導線（XのDM / Googleフォーム等）に差し替え -->
+    <a class="btn btn-primary" href="https://x.com/">X（旧Twitter）のDMで応募</a>
+  </div>
+</footer>
+<p class="foot">© 2026 CurtainCall — Laftive. All rights reserved.</p>
+
+</body>
+</html>
