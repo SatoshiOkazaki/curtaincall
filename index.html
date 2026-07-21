@@ -15,7 +15,7 @@
     --curtain: #a3232e;      /* 緞帳 */
     --curtain-lit: #c73340;  /* 照明の当たった襞 */
     --gold: #c9a04e;         /* 金襴 */
-    --light: #f2e9d8;        /* タングステンの白 */
+    --light: #f8f7f4;        /* 本文の白（暖色に寄せすぎると黄ばんで見えるため中立寄り） */
     --dim: #8e93a0;          /* 影の中の文字 */
     --line: #232732;         /* 罫 */
     --ok: #35c46a;           /* 検証グリーン（製品と同一） */
@@ -173,6 +173,9 @@
     font-size: clamp(15px, 1.9vw, 18px);
     letter-spacing: .18em;
     color: var(--light);
+    /* 折り返すと両脇の罫線が上下にズレるため、常に1行で組む */
+    white-space: nowrap;
+    max-width: 100%;
   }
   .tagline::before, .tagline::after {
     content: "";
@@ -182,13 +185,18 @@
     opacity: .75;
     flex: none;
   }
+  /* 狭い画面でも1行に収まるよう字送りと罫線を詰める（.tagline定義より後に置く） */
+  @media (max-width: 480px) {
+    .tagline { font-size: 13px; letter-spacing: .09em; gap: 10px; }
+    .tagline::before, .tagline::after { width: 15px; }
+  }
   .lede {
     font-family: var(--serif);
     font-size: clamp(28px, 5vw, 46px);
     font-weight: 600;
     letter-spacing: .1em;
     line-height: 1.5;
-    color: #fffdf6;
+    color: #ffffff;
     margin: 26px 0 18px;
     text-wrap: balance;
     text-shadow: 0 2px 30px rgba(0, 0, 0, .6);
@@ -238,7 +246,7 @@
     height: 16px;
     flex: none;
     background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M3.5 10.6 L7.8 14.8 L16.5 4.6' fill='none' stroke='%23f2e9d8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat;
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M3.5 10.6 L7.8 14.8 L16.5 4.6' fill='none' stroke='%23f8f7f4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat;
   }
   /* 判決のように据える小さな金の額 */
   .unneeded-verdict {
