@@ -456,29 +456,8 @@
   .faq summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .faq .a { padding: 0 4px 22px; font-size: 14px; color: var(--dim); max-width: 44em; }
 
-  /* ---------- フッター ---------- */
-  .finale {
-    text-align: center;
-    padding: 110px 24px 60px;
-    border-top: 1px solid var(--line);
-    position: relative;
-    overflow: hidden;
-  }
-  .finale::before {
-    content: "";
-    position: absolute; inset: auto 0 0 0; height: 240px;
-    background: radial-gradient(ellipse 50% 100% at 50% 100%, rgba(163,35,46,.18), transparent 70%);
-    pointer-events: none;
-  }
-  .finale h2 { margin-bottom: 14px; }
-  .finale .sub { margin-bottom: 40px; }
-  .foot {
-    padding: 26px 24px 34px;
-    text-align: center;
-    color: #5a5f6b;
-    font-size: 12px;
-    letter-spacing: .08em;
-  }
+  /* 最終セクションの下端に余白を確保 */
+  body > section:last-of-type { padding-bottom: 40px; }
 </style>
 </head>
 <body>
@@ -618,7 +597,7 @@
     <div class="maker">
       <div class="maker-mark" aria-hidden="true"></div>
       <p>CurtainCallは、いまも毎週末カメラを回している婚礼映像クリエイターが、自分の現場の「間に合わないかもしれない」を消すために作ったツールです。機能はすべて、実際の挙式で使いながら磨いています。
-      <span class="name">Zmotons 岡崎 聡<!-- TODO: X等のリンクを追加 --></span></p>
+      <span class="name">Zmotions 岡崎 聡<!-- TODO: X等のリンクを追加 --></span></p>
     </div>
   </div>
 </section>
@@ -651,16 +630,6 @@
     </div>
   </div>
 </section>
-
-<footer class="finale" id="beta">
-  <h2>幕が上がる前に、準備は終わっている。</h2>
-  <p class="sub">現在、先行テスターを募集しています。現場で使った感想をいただける方に、正式版を優先価格でご案内します。</p>
-  <div class="cta-row">
-    <!-- TODO: 応募導線（XのDM / Googleフォーム等）に差し替え -->
-    <a class="btn btn-primary" href="https://x.com/">X（旧Twitter）のDMで応募</a>
-  </div>
-</footer>
-<p class="foot">© 2026 CurtainCall — Laftive. All rights reserved.</p>
 
 </body>
 </html>
