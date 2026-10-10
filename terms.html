@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>利用規約 — CurtainCall</title>
+<meta name="description" content="CurtainCall ソフトウェア使用許諾契約（利用規約）。" />
+<meta name="robots" content="index,follow" />
+<style>
+  :root {
+    --ground: #FAFAF7; --surface: #FFFFFF; --line: #E4E3DD; --line-soft: #EFEEE9;
+    --ink: #16161A; --ink-2: #5E5E57;
+    --accent: #1F3FD1; --accent-deep: #142C9A; --accent-soft: #E6EBFB;
+    --aurora-base: #F7F6F3; --aurora-1: #A9CFDA; --aurora-2: #EEE2A8; --aurora-3: #D3BFE2;
+    --caution: #9A5B00; --caution-soft: #FBF0DC;
+    --font: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  /* ライトテーマ1本に固定（LP・取扱説明書と同じ） */
+  :root, :root[data-theme="light"], :root[data-theme="dark"] { color-scheme: light; background: var(--ground); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--ground); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.9; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: var(--accent); text-decoration-color: rgba(31,63,209,.35); text-underline-offset: 3px; }
+  a:hover { color: var(--accent-deep); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+  .cover { padding: 72px 24px 44px; text-align: center; background: var(--aurora-base); border-bottom: 1px solid var(--line); }
+  .cover-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .2em; color: var(--accent); }
+  .cover h1 { font-size: clamp(28px, 6vw, 44px); font-weight: 900; line-height: 1.3; margin-top: 12px; text-wrap: balance; }
+  .cover p { color: var(--ink-2); font-size: 14px; margin-top: 14px; }
+  .page { max-width: 760px; margin: 0 auto; padding: 48px 24px 72px; }
+  @media (max-width: 600px) { .page { padding: 36px 16px 56px; } .cover { padding: 56px 16px 36px; } }
+  .back { font-size: 13px; margin-bottom: 28px; display: inline-block; }
+  h2 { font-size: 19px; font-weight: 700; line-height: 1.5; margin: 40px 0 10px; padding-top: 28px; border-top: 1px solid var(--line); }
+  h2:first-of-type { border-top: 0; padding-top: 0; margin-top: 8px; }
+  p, li { font-size: 15px; letter-spacing: .02em; overflow-wrap: anywhere; }
+  p + p { margin-top: 10px; }
+  ol, ul { padding-left: 1.5em; margin-top: 8px; }
+  li + li { margin-top: 6px; }
+  .todo { background: var(--caution-soft); color: var(--caution); font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+  .note { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 14px 16px; margin-top: 14px; font-size: 14px; color: var(--ink-2); }
+  .tok { border-top: 1px solid var(--line); }
+  .tok-row { display: grid; grid-template-columns: minmax(0, 11em) minmax(0, 1fr); gap: 8px 24px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .tok-row dt { font-size: 14px; font-weight: 700; color: var(--ink-2); line-height: 1.8; }
+  .tok-row dd { font-size: 15px; line-height: 1.9; overflow-wrap: anywhere; }
+  .tok-row dd p + p, .tok-row dd ul { margin-top: 8px; }
+  @media (max-width: 600px) { .tok-row { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+  .colophon { max-width: 760px; margin: 0 auto; padding: 28px 24px 56px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+  .colophon a { color: var(--ink-2); }
+  .colophon .mark { font-weight: 900; color: var(--ink); }
+</style>
+</head>
+<body>
+<header class="cover">
+  <p class="cover-eyebrow">TERMS OF USE</p>
+  <h1>利用規約（ソフトウェア使用許諾契約）</h1>
+  <p>最終更新日：2026年10月11日</p>
+</header>
+<main class="page">
+  <a class="back" href="index.html">← CurtainCall トップへ</a>
+
+  <p>この利用規約（以下「本規約」）は、Zmotions 岡崎 聡（以下「提供者」）が提供するソフトウェア「CurtainCall」（以下「本ソフトウェア」）の使用許諾条件を定めるものです。お客様は、本規約に同意のうえ、ライセンスをご購入またはご利用ください。ご購入手続きの際に本規約への同意をいただき、同意をもって契約が成立します。</p>
+
+  <h2>第1条（使用許諾）</h2>
+  <ol>
+    <li>提供者は、お客様が代金を支払ってライセンスを取得したときに、本ソフトウェアを本規約に従って使用する、譲渡できない非独占的な権利を許諾します。</li>
+    <li>ライセンスは、1ライセンスにつき1名の使用者（以下「使用者」）に対して許諾されます。個人のお客様がご購入の場合は、ご購入者本人が使用者となります。</li>
+    <li>事業者のお客様がご購入の場合は、購入時に登録された1名（従業員、業務委託先等）が使用者となります。本ソフトウェアを使用する人数分のライセンスが必要です。</li>
+    <li>使用者が使用する端末（Mac／Windows問いません）であれば、台数の制限なくインストールして使用できます。ただし、1つのライセンスを複数の人で使用すること（1台の端末を複数の人が使用する場合を含みます）はできません。</li>
+    <li>本ソフトウェアで取り込んだ映像素材その他のデータの権利は、お客様または当該素材の権利者に帰属し、提供者は一切の権利を取得しません。</li>
+  </ol>
+
+  <h2>第2条（ライセンスキー）</h2>
+  <ol>
+    <li>ライセンスキーには、購入時にお客様が入力した名前（個人のお客様はお名前、事業者のお客様は事業者名と使用者名）が組み込まれ、本ソフトウェアの設定画面に表示されます。</li>
+    <li>お客様は、ライセンスキーを善良な管理者の注意をもって管理するものとします。</li>
+    <li>ライセンスキーの再発行は、紛失等の場合に提供者の判断で行うことがあります。再発行にあたり、購入の事実の確認をさせていただくことがあります。</li>
+    <li>事業者のお客様は、退職・異動等により使用者が変わる場合、提供者に申請することで、無償で使用者を変更できます。提供者は変更後の名前でライセンスキーを再発行し、変更前のライセンスキーは使用できなくなります。</li>
+  </ol>
+
+  <h2>第3条（禁止事項）</h2>
+  <p>お客様は、次の行為をしてはなりません。</p>
+  <ol>
+    <li>ライセンスキーまたは本ソフトウェアを、第三者に譲渡、貸与、販売、共有、再配布、公開すること（インターネット上への掲載を含みます）。</li>
+    <li>使用者以外の者に本ソフトウェアを使用させること、または1つのライセンスを複数の人で使用すること。</li>
+    <li>本ソフトウェアの全部または一部を、法令で認められる範囲を超えて、リバースエンジニアリング、逆コンパイル、逆アセンブル、改変すること。</li>
+    <li>ライセンス確認の仕組みを回避・無効化し、またはライセンスキーを偽造・不正に生成すること。</li>
+    <li>本ソフトウェアを利用して、法令または公序良俗に反する行為、第三者の権利を侵害する行為を行うこと。</li>
+    <li>提供者または第三者に不利益を与える、または運営を妨げる行為。</li>
+  </ol>
+  <p>お客様が前項に違反した場合、提供者は、事前の通知なくライセンスを無効にできるものとします。この場合も、支払い済みの代金は返金されません（ただし、提供者に責任がある場合を除きます）。</p>
+
+  <h2>第4条（知的財産権）</h2>
+  <p>本ソフトウェアおよび関連資料（取扱説明書、画面デザイン、名称、ロゴを含みます）に関する著作権その他の知的財産権は、提供者または正当な権利者に帰属します。本規約は、これらの権利をお客様に譲渡するものではありません。本ソフトウェアには、オープンソースその他第三者のソフトウェアが含まれる場合があり、その部分には各ライセンス条件が適用されます。</p>
+
+  <h2>第5条（本ソフトウェアの動作とデータの取扱い）</h2>
+  <ol>
+    <li>本ソフトウェアは、SDカード等のメディアに対しては<b>読み取りのみ</b>を行い、メディア内のデータの消去・書き換え・フォーマットは行いません。お客様のコンピュータ側（取り込み先フォルダ、設定ファイル、一時ファイル等）への書き込みのみを行います。取り出しの操作は、メディアのアンマウント（マウント解除）のみで、データには触れません。</li>
+    <li>ただし、OSがメディアをマウントする際に、OS自身が管理用の隠しファイル（インデックス等）をメディア上に作成することがあります。これは本ソフトウェアの動作ではありません。</li>
+    <li>本ソフトウェアは、取り込み後にコピーの検証を行い、結果を画面に表示します。この表示は、取り込みと検証の結果をお知らせするものであり、素材の完全性を保証するものではありません。</li>
+    <li>メディアのフォーマット（初期化）や削除は、<b>お客様ご自身の判断と手動の操作</b>で行うものとします。お客様は、フォーマット等を行う前に、取り込み先のデータが完全であることを、再生確認・ファイル数やサイズの照合等によりご自身で確認するものとします。</li>
+    <li>お客様は、重要なデータ（特に、撮り直しのできない映像素材）について、複数の場所へのバックアップを自らの責任で行うものとします。</li>
+  </ol>
+
+  <h2>第6条（免責）</h2>
+  <ol>
+    <li>本ソフトウェアは、現状有姿（as-is）で提供されます。提供者は、本ソフトウェアが、お客様の特定の目的への適合性、特定のカメラ・メディア・編集ソフトウェアとの互換性、不具合やエラーのないこと、継続的に利用できることを保証しません。ただし、動作環境を満たす場合の不具合への対応は、特定商取引法に基づく表記の「不具合による返金」に定める範囲で行います。</li>
+    <li>本ソフトウェアの使用または使用不能に関連して、お客様に生じた損害（撮影素材の欠損・消失、納期遅延、逸失利益、データ復旧費用その他の間接的・特別な損害を含みます）について、提供者は、次項の場合を除き、<b>お客様が本ソフトウェアに支払った代金の額を上限</b>として責任を負います。</li>
+    <li>前項の責任制限は、損害が提供者の故意または重大な過失による場合には適用しません。また、法令により責任の制限が認められない場合には、その範囲で適用しません。</li>
+    <li>お客様と第三者との間の紛争（撮影を依頼した顧客との紛争を含みます）については、お客様の責任で解決するものとし、提供者は責任を負いません。</li>
+    <li>OS、DaVinci Resolve、Premiere Pro、カメラ、カードリーダー等、本ソフトウェア以外の機器・ソフトウェアの仕様変更または不具合に起因する損害について、提供者は責任を負いません。</li>
+  </ol>
+
+  <h2>第7条（アップデート）</h2>
+  <ol>
+    <li>提供者は、本ソフトウェアの機能追加・不具合修正等のためのアップデートを提供することがあります。提供の有無・頻度・内容を約束するものではありません。</li>
+    <li>アップデートは、購入時と同一のメジャーバージョン（例：1.x）の間は無償で提供します。メジャーバージョンアップ（例：2.0）は有償となる場合があります。</li>
+    <li>提供者は、OSや連携ソフトウェアの変更等によりやむを得ない場合、本ソフトウェアの一部機能の変更または提供の終了を行うことがあります。その場合、事前にウェブサイトでお知らせするよう努めます。</li>
+  </ol>
+
+  <h2>第8条（サポート）</h2>
+  <p>サポートは、<a href="tokushoho.html">特定商取引法に基づく表記</a>記載のメールアドレスで承ります。対応時間・返信までの目安は同ページに記載のとおりです。個別の編集環境の構築、撮影現場への立ち会い等は、サポートの対象外です。</p>
+
+  <h2>第9条（個人情報）</h2>
+  <p>提供者は、購入手続きでお預かりしたお名前、メールアドレス等を、ライセンスの発行・送付、サポート対応、決済およびそれに伴う連絡の目的に限り利用します。カード情報は決済代行会社（Stripe）が取り扱い、提供者は保存しません。決済・データ保存・メール送信等の業務を委託する場合と法令に基づく場合を除き、お客様の同意なく第三者に提供することはありません。詳しくは<a href="privacy.html">プライバシーポリシー</a>をご覧ください。</p>
+
+  <h2>第10条（規約の変更）</h2>
+  <p>提供者は、法令の変更、サービス内容の変更等の必要がある場合、民法第548条の4の規定に基づき、本規約を変更できます。変更する場合は、変更後の規約の内容と効力発生日を、効力発生日の相当期間前までに、本ウェブサイトまたはご登録のメールアドレスへの連絡により周知します。</p>
+
+  <h2>第11条（契約の解除）</h2>
+  <p>お客様が本規約に違反した場合、提供者は、ライセンスを無効にし、本契約を解除できます。解除後、お客様は本ソフトウェアの使用を中止し、複製物をすべて削除するものとします。</p>
+
+  <h2>第12条（分離可能性）</h2>
+  <p>本規約のいずれかの条項が無効または執行不能と判断された場合も、他の条項の効力には影響しません。</p>
+
+  <h2>第13条（準拠法・合意管轄）</h2>
+  <p>本規約は日本法に準拠し、解釈されます。本規約または本ソフトウェアに関して生じた紛争については、提供者の住所地を管轄する地方裁判所を第一審の専属的合意管轄裁判所とします。ただし、お客様が消費者である場合は、法令が定める管轄を妨げません。</p>
+
+  <h2>提供者</h2>
+  <p>Zmotions（岡崎 聡）<br />連絡先：<a href="tokushoho.html">特定商取引法に基づく表記</a>をご覧ください。</p>
+</main>
+<footer class="colophon">
+  <span class="mark">CurtainCall</span>
+  <span><a href="tokushoho.html">特定商取引法に基づく表記</a>　<a href="privacy.html">プライバシーポリシー</a></span>
+  <span>Zmotions 岡崎 聡</span>
+</footer>
+</body>
+</html>
