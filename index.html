@@ -39,6 +39,8 @@
     background: var(--aurora-base);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* display を指定した要素（.nobr など）でも hidden 属性で確実に隠す */
+  [hidden] { display: none !important; }
   html { scroll-behavior: smooth; }
   body {
     /* 地は html と最背面の流動グラデーション層が受け持つので、body は透明にする */
@@ -137,7 +139,7 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    /* 上＝画面上端からの余白。ロゴ・写真 → ダウンロードボタン → 対応機種の行の間隔は各要素の margin-top で持つ */
+    /* 上＝画面上端からの余白。ロゴ・写真 → 購入ボタン → 対応機種の行の間隔は各要素の margin-top で持つ */
     padding-top: clamp(56px, 7vw, 100px);
   }
   /* 左＝タグライン・ロゴ・コピー ／ 右＝婚礼写真 */
@@ -235,15 +237,23 @@
   }
   .btn-primary { background: var(--accent); color: #FFFFFF; }
   .btn-primary:hover { background: var(--accent-deep); color: #FFFFFF; }
-  /* ヒーロー下のダウンロードボタン。2つを横に並べ、画面の左右中央に置く */
-  /* 2つのボタンは同じ幅（長い方に合わせる） */
+  /*
+    購入ボタン（ヒーローと価格セクションの2か所。文言と状態は末尾の script が /price の結果で出し分ける）。
+    文言が変わっても幅が大きく跳ねないよう、最小幅をそろえて中央に文字を置く。
+    押せない状態（発売前など）は aria-disabled と見た目（灰色・禁止カーソル・hover 変化なし）の両方で示す。
+  */
+  .buy-btn { justify-content: center; min-width: min(300px, calc(100vw - 32px)); }
+  .btn[aria-disabled="true"],
+  .btn[aria-disabled="true"]:hover {
+    background: var(--line);
+    color: var(--ink-2);
+    box-shadow: inset 0 0 0 1px rgba(22, 22, 26, .12);
+    cursor: not-allowed;
+  }
+  /* ヒーロー下の購入ボタン。画面の左右中央に置く */
   .hero-cta {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
     width: fit-content;
-    /* ボタンの間隔（.cta-row の12pxより広げる） */
-    gap: 12px 24px;
     margin: clamp(96px, 10.6vw, 156px) auto 0;
   }
   .hero-cta .btn { justify-content: center; }
@@ -281,8 +291,8 @@
     .shot.hero-photo { transform: none; }
   }
   @media (max-width: 600px) {
-    /* スマホでは横幅いっぱいに縦積み */
-    .hero-cta { grid-auto-flow: row; width: auto; }
+    /* スマホでは購入ボタンを横幅いっぱいに */
+    .hero-cta { width: auto; }
   }
 
   /* ---------- 章立て共通 ---------- */
@@ -398,6 +408,11 @@
   }
   .price-num .tax { margin-left: .3em; font-size: 13px; color: var(--ink-2); }
   .price-sub { font-size: 13px; color: var(--ink-2); }
+  /* 価格表の下の購入ボタン。法的表記のリンク（.price-legal）の手前に置き、条件を読んでから押せる並びにする */
+  .buy-box { padding: 28px 0 32px; border-top: 1px solid var(--line); }
+  .buy-note { margin-top: 12px; font-size: 13px; letter-spacing: .04em; line-height: 1.7; color: var(--ink-2); }
+  /* スマホでは価格表の下のボタンを横幅いっぱいに（300px 固定だと右に中途半端な余白が残る） */
+  @media (max-width: 600px) { .buy-box .buy-btn { display: flex; } }
   .price-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
   /* 支払い・引き渡し・返品の条件は別ページ。表の最後の行と同じ間隔で小さく添える */
   .price-legal {
@@ -450,7 +465,14 @@
       </div>
       <figure class="shot hero-photo"><img class="shot-media" src="hero.jpg" alt="窓辺でブーケを持つ花嫁のシルエット" width="1200" height="900" /></figure>
     </div>
-    <p class="hero-price"><span class="nobr">早期価格 <b>3,980円</b>（税込）・発売から30日間 ／</span> <span class="nobr">以降 5,980円</span><a href="#price">価格と条件</a></p>
+    <!--
+      購入ボタン。初期（JavaScript 無効・読み込み前）は「購入する」で、押せば /buy が時期に応じた価格の決済へ送る。
+      末尾の script が /price の結果で文言・状態を上書きする（発売前は押せない「近日発売」など）。価格を決めるのは常にサーバー側。
+    -->
+    <div class="cta-row hero-cta">
+      <a class="btn btn-primary buy-btn" data-buy href="https://buy.zmotions.net/buy" rel="nofollow">購入する</a>
+    </div>
+    <p class="hero-price"><span class="nobr" data-hp="main">早期価格 <b>3,980円</b>（税込）・<span data-hp="term">発売から30日間</span> ／</span> <span class="nobr" data-hp="after">以降 5,980円</span><a href="#price">価格と条件</a></p>
     <p class="hero-note">SONY α・Panasonic LUMIX・Canon EOS ／ macOS・Windows ／ DaVinci Resolve Studio・Premiere Pro</p>
   </div>
 </header>
@@ -547,6 +569,8 @@
         <div class="price-row"><dt>EARLY</dt><dd>
           <p class="price-num"><b>3,980円</b><span class="tax">（税込）</span></p>
           <p class="price-sub">早期価格・発売から30日間</p>
+          <!-- 「◯月◯日〜◯月◯日」は末尾の script が /price の発売日・終了日から自動表示（景品表示法：切替日の明記）。日付が取れないときは出さない -->
+          <p class="price-sub" data-early-range hidden></p>
         </dd></div>
         <div class="price-row"><dt>REGULAR</dt><dd>
           <p class="price-num"><b>5,980円</b><span class="tax">（税込）</span></p>
@@ -563,6 +587,10 @@
         <div class="price-row"><dt>REFERRAL</dt><dd>紹介コードの入力で、正価から10％割引（早期価格との併用はできません）</dd></div>
         <div class="price-row"><dt>REFUND</dt><dd>ダウンロード提供のデジタル商品のため、お客様のご都合による返品・返金はお受けできません。動作環境を満たしているのに起動しない等の不具合が、購入後14日以内に解決できなかった場合は返金します。</dd></div>
       </dl>
+      <div class="buy-box">
+        <a class="btn btn-primary buy-btn" data-buy href="https://buy.zmotions.net/buy" rel="nofollow">購入する</a>
+        <p class="buy-note" data-buy-note hidden></p>
+      </div>
       <p class="price-legal">お支払い・お引き渡し・返品の条件は<a href="tokushoho.html">特定商取引法に基づく表記</a>と<a href="terms.html">利用規約</a>をご確認ください。</p>
     </div>
   </div>
@@ -588,6 +616,135 @@
     <span>Zmotions 岡崎 聡</span>
   </div>
 </footer>
+
+<script>
+/*
+  購入ボタンと価格まわりの文言を、購入サーバーの /price（JSON）で出し分ける。
+    phase: prelaunch | early | regular | unavailable
+  ・価格そのものはサーバー（/buy）が決める。ここで出す 3,980円 / 5,980円 は表示用の固定値で、決済額には影響しない。
+  ・/price が取れない・遅い（4秒）・想定外の JSON のときは「購入する」のまま（HTML の初期状態と同じ）。
+  ・日付は JST。最終日 ＝ earlyEndsAt（この時刻から正価）の1日前。
+*/
+(function () {
+  "use strict";
+
+  var BUY_URL = "https://buy.zmotions.net/buy";
+  var PRICE_URL = "https://buy.zmotions.net/price";
+  var TIMEOUT_MS = 4000;
+  var EARLY_DAYS = 30;
+  var YEN_EARLY = "3,980";
+  var YEN_REGULAR = "5,980";
+  var DAY_MS = 24 * 60 * 60 * 1000;
+  var JST_MS = 9 * 60 * 60 * 1000;
+  var PHASES = ["prelaunch", "early", "regular", "unavailable"];
+
+  var $ = function (sel) { return document.querySelectorAll(sel); };
+  var buyBtns = $("[data-buy]");
+  var buyNotes = $("[data-buy-note]");
+  var earlyRanges = $("[data-early-range]");
+  var hpMain = document.querySelector('[data-hp="main"]');
+  var hpTerm = document.querySelector('[data-hp="term"]');
+  var hpAfter = document.querySelector('[data-hp="after"]');
+
+  /* "YYYY-MM-DD"（JST の日付）→ その日 00:00 JST の epoch ms。実在しない日付・形式違いは NaN */
+  function dateStrToMs(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof s === "string" ? s : "");
+    if (!m) return NaN;
+    var y = +m[1], mo = +m[2], d = +m[3];
+    var utc = Date.UTC(y, mo - 1, d);
+    var c = new Date(utc);
+    if (c.getUTCFullYear() !== y || c.getUTCMonth() !== mo - 1 || c.getUTCDate() !== d) return NaN;
+    return utc - JST_MS;
+  }
+  /* epoch ms → JST の「11月9日」 */
+  function jstMD(ms) {
+    var d = new Date(ms + JST_MS);
+    return (d.getUTCMonth() + 1) + "月" + d.getUTCDate() + "日";
+  }
+  /* /price を取りに行く。4秒で打ち切り。Promise<object|null>（null＝失敗・想定外） */
+  function loadPrice() {
+    if (typeof fetch !== "function") return Promise.resolve(null);
+    var ctl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer;
+    var timeout = new Promise(function (resolve) {
+      timer = setTimeout(function () { if (ctl) ctl.abort(); resolve(null); }, TIMEOUT_MS);
+    });
+    var req = fetch(PRICE_URL, { cache: "no-store", credentials: "omit", signal: ctl ? ctl.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+    return Promise.race([req, timeout]).then(function (v) { clearTimeout(timer); return v; });
+  }
+
+  /* 購入ボタン2つの文言と状態をそろえて更新する */
+  function setBuy(label, enabled) {
+    for (var i = 0; i < buyBtns.length; i++) {
+      var a = buyBtns[i];
+      a.textContent = label;
+      if (enabled) {
+        a.setAttribute("href", BUY_URL);
+        a.removeAttribute("aria-disabled");
+        a.removeAttribute("role");
+      } else {
+        a.removeAttribute("href");
+        a.setAttribute("aria-disabled", "true");
+        a.setAttribute("role", "link");
+      }
+    }
+  }
+  function setNote(text) {
+    for (var i = 0; i < buyNotes.length; i++) {
+      buyNotes[i].textContent = text || "";
+      buyNotes[i].hidden = !text;
+    }
+  }
+  function setRange(text) {
+    for (var i = 0; i < earlyRanges.length; i++) {
+      earlyRanges[i].textContent = text || "";
+      earlyRanges[i].hidden = !text;
+    }
+  }
+
+  function render(data) {
+    var ok = data && typeof data === "object" && PHASES.indexOf(data.phase) >= 0;
+    if (!ok) {
+      /* 取得失敗・想定外: 「購入する」のまま。価格は /buy がサーバー側で正しく決める */
+      setBuy("購入する", true);
+      return;
+    }
+    var phase = data.phase;
+    document.documentElement.setAttribute("data-buy-phase", phase);
+
+    /* 日付（取れたものだけ使う） */
+    var startMs = dateStrToMs(data.launchDate);
+    var endMs = typeof data.earlyEndsAt === "string" ? Date.parse(data.earlyEndsAt) : NaN;
+    if (isFinite(startMs) && isFinite(endMs) && endMs <= startMs) { startMs = NaN; endMs = NaN; }
+    var startLabel = isFinite(startMs) ? jstMD(startMs) : "";
+    var lastLabel = isFinite(endMs) ? jstMD(endMs - DAY_MS) : "";
+    var range = startLabel && lastLabel ? startLabel + "〜" + lastLabel : "";
+
+    if (phase === "prelaunch" || phase === "unavailable") {
+      setBuy(phase === "prelaunch" && startLabel ? startLabel + "発売" : "近日発売", false);
+      setNote("");
+      setRange(phase === "prelaunch" ? range : "");
+    } else if (phase === "early") {
+      setBuy("早期価格 " + YEN_EARLY + "円で購入", true);
+      setNote(lastLabel ? lastLabel + "まで。以降 " + YEN_REGULAR + "円" : "");
+      setRange(range);
+      /* ヒーローの価格行: 「発売から30日間」を具体的な最終日に */
+      if (hpTerm && lastLabel) hpTerm.textContent = lastLabel + "まで";
+    } else {
+      setBuy(YEN_REGULAR + "円で購入", true);
+      setNote("");
+      /* 早期価格は終了済み。ヒーローの価格行は正価だけにして、早期価格が続いているように見せない */
+      if (hpMain) hpMain.innerHTML = "<b>" + YEN_REGULAR + "円</b>（税込）";
+      if (hpAfter) hpAfter.hidden = true;
+      setRange(range ? range + "（終了しました）" : "");
+    }
+  }
+
+  loadPrice().then(render);
+})();
+</script>
 
 </body>
 </html>
