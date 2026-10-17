@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CurtainCall 取扱説明書（Mac版）</title>
+<meta name="description" content="CurtainCall（婚礼当日エンドロールのためのメディア取り込み自動化アプリ）の取扱説明書（Mac版）。インストールとライセンス登録、案件の作成、メディアの取り込みと差分取り込み、編集ソフトへの取り込み、設定、困ったときの対処。" />
+<meta property="og:title" content="CurtainCall 取扱説明書（Mac版）" />
+<meta property="og:description" content="メディアを挿すだけで、コピー・検証から編集ソフトへの取り込みまで。画面つきの簡単な取扱説明書です。" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    /* 面 */
+    --ground: #FAFAF7;
+    --surface: #FFFFFF;
+    --line: #E4E3DD;
+    --line-soft: #EFEEE9;
+    /* 文字 */
+    --ink: #16161A;
+    --ink-2: #5E5E57;
+    /* 差し色（唯一） */
+    --accent: #1F3FD1;
+    --accent-deep: #142C9A;
+    --accent-soft: #E6EBFB;
+    /* 流動グラデーション（表紙のみ） */
+    --aurora-base: #F7F6F3;
+    --aurora-1: #A9CFDA;
+    --aurora-2: #EEE2A8;
+    --aurora-3: #D3BFE2;
+    /* 注意・状態（青とは別枠） */
+    --caution: #9A5B00;
+    --caution-soft: #FBF0DC;
+    --ok: #1B7A43;
+    --ok-soft: #E3F3E9;
+    --err: #B3261E;
+    --err-soft: #FBEAE9;
+    /* スクショ上の「ここを押す」赤枠 */
+    --mark: #E5484D;
+    /* 図のカメラ色（文字 A/B/C を必ず併記し、色だけに頼らない） */
+    --cam-a: #142C9A;  --cam-a-bg: #E6EBFB;
+    --cam-b: #5B3A86;  --cam-b-bg: #EFE6F7;
+    --cam-c: #1F5F6D;  --cam-c-bg: #DFEFF2;
+    /* 書体 */
+    --font: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ライトテーマ1本に固定。閲覧側のテーマ設定に関わらず地色を明示する */
+  html, :root[data-theme="light"], :root[data-theme="dark"] {
+    background: var(--ground);
+    color-scheme: light;
+  }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration-color: rgba(31,63,209,.35); text-underline-offset: 3px; }
+  a:hover { color: var(--accent-deep); text-decoration-color: var(--accent-deep); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+  ::selection { background: var(--accent-soft); color: var(--ink); }
+
+  /* ---------- 表紙 ---------- */
+  .cover {
+    position: relative;
+    isolation: isolate;
+    padding: 80px 24px 52px;
+    text-align: center;
+    overflow: hidden;
+    background: var(--aurora-base);
+    border-bottom: 1px solid var(--line);
+  }
+  .aurora { position: absolute; inset: -12%; z-index: -1; filter: blur(64px); }
+  .aurora span { position: absolute; width: 46%; height: 46%; border-radius: 50%; opacity: .6; }
+  .aurora span:nth-child(1) { background: var(--aurora-1); top: 6%; left: 6%; animation: auroraA 30s ease-in-out infinite alternate; }
+  .aurora span:nth-child(2) { background: var(--aurora-2); top: -6%; right: 4%; animation: auroraB 34s ease-in-out infinite alternate; }
+  .aurora span:nth-child(3) { background: var(--aurora-3); bottom: -14%; left: 32%; animation: auroraC 26s ease-in-out infinite alternate; }
+  @keyframes auroraA { from { transform: translate(0, 0); } to { transform: translate(7%, 9%); } }
+  @keyframes auroraB { from { transform: translate(0, 0); } to { transform: translate(-8%, 6%); } }
+  @keyframes auroraC { from { transform: translate(0, 0); } to { transform: translate(6%, -7%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .aurora span { animation: none !important; }
+  }
+  .cover-inner { position: relative; max-width: 620px; margin: 0 auto; }
+  .cover-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-indent: .2em;
+  }
+  .cover h1 {
+    font-size: clamp(40px, 8vw, 68px);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin-top: 16px;
+    text-wrap: balance;
+  }
+  .cover-sub {
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.9;
+    margin-top: 18px;
+    text-wrap: balance;
+  }
+  .cover-meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 18px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-2);
+    letter-spacing: .02em;
+  }
+  .cover-meta b { color: var(--ink); font-weight: 700; }
+  /* 句の途中で折り返さない（「で。」だけが次の行に残るのを防ぐ） */
+  .nobr { display: inline-block; }
+
+  /* ---------- 全体レイアウト ---------- */
+  .shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+    display: grid;
+    grid-template-columns: 208px minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+  /* 目次：本文に対する索引なので、読み進めても常に見える位置に置く */
+  .toc {
+    position: sticky;
+    top: 28px;
+    padding-top: 52px;
+    font-size: 13.5px;
+    line-height: 1.75;
+  }
+  .toc-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-indent: .2em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 12px;
+  }
+  .toc ol { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .toc a {
+    display: block;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 3px 0 3px 12px;
+    border-left: 2px solid transparent;
+    transition: color 150ms linear, border-color 150ms linear;
+  }
+  .toc a:hover, .toc a:focus-visible { color: var(--ink); border-left-color: var(--accent); }
+  .toc .sub a { padding-left: 30px; font-size: 12.5px; }
+
+  .doc { padding-top: 52px; min-width: 0; }
+
+  /* ---------- 節 ---------- */
+  .chapter { padding-bottom: 8px; margin-bottom: 52px; }
+  .chapter + .chapter { border-top: 1px solid var(--line); padding-top: 40px; }
+  .chapter-no {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .2em;
+    color: var(--accent);
+  }
+  .chapter > h2 {
+    font-size: clamp(26px, 3.2vw, 36px);
+    font-weight: 900;
+    line-height: 1.35;
+    margin: 6px 0 16px;
+    text-wrap: balance;
+  }
+  .chapter h3 {
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 36px 0 4px;
+  }
+  .doc p { max-width: 62ch; }
+
+  /* ---------- 説明文：機能のしくみを伝える箇所だけ文章で書く ---------- */
+  .lead { font-size: 16.5px; line-height: 1.9; }
+  .chapter > p + p, .chapter > p + .points, .chapter > .points + p { margin-top: 10px; }
+  .chapter > .fig + p, .chapter > .marks + p { margin-top: 14px; }
+  .points { list-style: none; margin: 12px 0 0; padding: 0; max-width: 62ch; display: grid; gap: 6px; }
+  .points > li { position: relative; padding-left: 20px; font-size: 15.5px; line-height: 1.75; }
+  .points > li::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: .72em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  /* 「やらなくてよいこと」：打ち消しの × 印 */
+  .points.no > li::before {
+    content: "×";
+    top: 0;
+    width: auto;
+    height: auto;
+    background: none;
+    color: var(--err);
+    font-weight: 900;
+    line-height: 1.75;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: .875em;
+    background: var(--accent-soft);
+    border: 1px solid rgba(31,63,209,.18);
+    border-radius: 4px;
+    padding: .1em .38em;
+    color: var(--accent-deep);
+    white-space: nowrap;
+  }
+
+  /* ---------- 仕様の短い一覧 ---------- */
+  .spec { margin-top: 18px; max-width: 720px; border-top: 1px solid var(--line); }
+  .spec > div {
+    display: grid;
+    grid-template-columns: 6.5em minmax(0, 1fr);
+    gap: 4px 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .spec dt { font-size: 13px; font-weight: 700; color: var(--ink-2); line-height: 2.1; }
+  .spec dd { font-size: 15px; }
+
+  /* ---------- 手順：番号＋短い動詞句。補足は1行まで ---------- */
+  .steps { list-style: none; counter-reset: step; margin: 16px 0 0; padding: 0; max-width: 760px; border-top: 1px solid var(--line); }
+  .steps > li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 0 16px;
+    padding: 16px 0 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  /* 番号(擬似要素)は1列目、実際の子要素(見出し・本文・図)はすべて2列目へ寄せる */
+  .steps > li::before {
+    content: counter(step, decimal-leading-zero);
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    align-self: start;
+    padding-top: 2px;
+  }
+  .steps > li > * { grid-column: 2; }
+  .step-title { font-weight: 700; font-size: 17px; line-height: 1.6; }
+  .steps .note { margin-top: 2px; color: var(--ink-2); font-size: 14.5px; line-height: 1.7; }
+  .steps .fig + .note, .steps .marks + .note { margin-top: 10px; }
+  .tag {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    line-height: 1.8;
+    vertical-align: 2px;
+    color: var(--caution);
+    background: var(--caution-soft);
+    border-radius: 999px;
+    padding: 0 10px;
+    white-space: nowrap;
+  }
+
+  /* ---------- 画面写真 ---------- */
+  .fig { margin: 12px 0 0; max-width: 720px; }
+  .fig img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #0b0f14;
+  }
+  /* 画面右下の小窓：実際の大きさに近い幅で見せる */
+  .fig.ov { max-width: 400px; }
+  .fig figcaption { margin-top: 6px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+  .fig figcaption b { color: var(--ink); }
+  /* 1回目と2回目を並べて比べる */
+  .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 720px; margin-top: 12px; }
+  .pair .fig { margin: 0; }
+
+  /* ---------- スクショ上の赤枠（1枚に1つまで）：画像に重ね、%指定で画像の拡大縮小に追従させる ---------- */
+  .anno { position: relative; }
+  .mk {
+    position: absolute;
+    border: 3px solid var(--mark);
+    border-radius: 9px;
+    /* 暗い画面でも赤い帯の上でも埋もれないよう、外側に細い白縁 */
+    box-shadow: 0 0 0 1.5px rgba(255,255,255,.85);
+    pointer-events: none;
+  }
+  /* 写真の下の小手順（1行1操作）。赤枠は1枚に1つまでなので、番号は画像に付けず本文だけで示す */
+  .marks > li::before {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font: 700 12px/1 var(--mono);
+  }
+  .marks { list-style: none; counter-reset: mark; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+  .marks > li { counter-increment: mark; display: flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 500; line-height: 1.5; font-feature-settings: "palt" 1; }
+  .marks > li::before { content: counter(mark); flex: none; }
+
+  /* ---------- 状態バッジ（アプリ画面の表示と対応させる） ---------- */
+  .state {
+    display: inline-block;
+    font-size: .82em;
+    font-weight: 700;
+    letter-spacing: .02em;
+    padding: 0 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .state.safe { color: var(--ok); background: var(--ok-soft); }
+  .state.pend { color: var(--caution); background: var(--caution-soft); }
+  .state.done { color: var(--ink-2); background: var(--line-soft); }
+
+  /* ---------- 図：共通の枠 ---------- */
+  .dgs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(214px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+    max-width: 760px;
+  }
+  .dg {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 14px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .dg-title { font-size: 14px; font-weight: 700; line-height: 1.5; text-wrap: balance; }
+  .dg-note { margin-top: auto; font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
+  .dg-note.warn { color: var(--caution); }
+  .dg-note code { font-size: .95em; }
+  @media (min-width: 720px) {
+    /* 横並び時は題名の行数をそろえ、図の高さ位置を合わせる */
+    .dgs .dg-title { min-height: 3em; }
+    .dgs.stack .dg-title { min-height: 0; }
+  }
+
+  /* 図のカメラ（A/B/C）の色 */
+  .ca { background: var(--cam-a-bg); color: var(--cam-a); border-color: rgba(20,44,154,.35); }
+  .cb { background: var(--cam-b-bg); color: var(--cam-b); border-color: rgba(91,58,134,.35); }
+  .cc { background: var(--cam-c-bg); color: var(--cam-c); border-color: rgba(31,95,109,.35); }
+
+  /* ---------- 図：データの流れ（未使用） ---------- */
+  .pipe {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 18px;
+    max-width: 620px;
+  }
+  .pipe > span {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 56px;
+    padding: 6px 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+  }
+  .pipe small { font-size: 11.5px; font-weight: 500; color: var(--ink-2); }
+  .pipe > span.ok small { order: -1; color: inherit; font-weight: 700; line-height: 1.2; }
+  .pipe > span.ok { color: var(--ok); background: var(--ok-soft); border-color: rgba(27,122,67,.35); }
+  .pipe > span:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -13px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid var(--ink-2);
+    border-right: 2px solid var(--ink-2);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  /* ---------- 図：フォルダ → ビン ---------- */
+  .bins {
+    display: grid;
+    grid-template-columns: max-content minmax(26px, 1fr) max-content;
+    align-items: start;
+  }
+  /* 1行 30px ＋ 間隔 8px × 3行 = 106px。SVG の座標も同じ値で引く */
+  .bins > .col { display: grid; grid-template-rows: repeat(3, 30px); row-gap: 8px; }
+  .bins .chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid;
+    border-radius: 6px;
+    font: 600 12px/1 var(--mono);
+    white-space: nowrap;
+  }
+  .bins .bin {
+    position: relative;
+    align-self: center;
+    background: var(--surface);
+    color: var(--accent-deep);
+    border: 2px solid var(--accent);
+  }
+  .bins .bin::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-left: 7px solid var(--accent);
+    border-right: 0;
+  }
+  .bins svg { display: block; width: 100%; height: 106px; overflow: visible; }
+  .bins path { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .55; vector-effect: non-scaling-stroke; }
+  /* 凡例：左のチップ＝取り込んだフォルダ、右の青枠＝できるビン */
+  .bins-legend { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; font-weight: 700; line-height: 1.6; color: var(--ink-2); }
+  .bins-legend span { padding: 0 8px; border: 1px solid var(--line); border-radius: 5px; background: var(--line-soft); }
+  .bins-legend span.bin { border: 2px solid var(--accent); color: var(--accent-deep); background: var(--surface); }
+  /* 図の例に使うカメラ（撮影者名入りのラベル）。フォルダ名が長いので、ビンの図は1枚の幅を広めに取る */
+  .dg-ex { margin-top: 2px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+  .dgs.wide { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  /* タイムラインはカメラ名をクリップに書くため、横幅いっぱいの1列で見せる */
+  .dgs.stack { grid-template-columns: 1fr; }
+
+  /* ---------- 図：タイムライン ---------- */
+  .tl { display: grid; gap: 4px; }
+  .trk { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: center; gap: 6px; }
+  .trk > b { font: 600 11px/1 var(--mono); color: var(--ink-2); }
+  .lane { position: relative; height: 24px; background: var(--line-soft); border-radius: 4px; }
+  .lane > i {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    border: 1px solid;
+    border-radius: 3px;
+    font: normal 700 11px/18px var(--mono);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .lane.empty {
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 1.5px dashed var(--line);
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+
+  /* ---------- 図：編集ソフトの要件カード ---------- */
+  .ed-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .ed-head h4 { font-size: 16px; font-weight: 900; line-height: 1.4; }
+  .ed-head span { font-size: 12px; font-weight: 700; color: var(--caution); background: var(--caution-soft); border-radius: 999px; padding: 0 9px; }
+  .ed-link { font-size: 14px; font-weight: 700; }
+  .mini { list-style: none; counter-reset: mini; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .mini > li { counter-increment: mini; position: relative; padding-left: 28px; font-size: 14px; line-height: 1.55; font-feature-settings: "palt" 1; }
+  .mini > li::before {
+    content: counter(mini);
+    position: absolute; left: 0; top: 1px;
+    width: 20px; height: 20px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font: 700 11px/1 var(--mono);
+  }
+
+  /* ---------- 困ったとき：症状 → 対処（1行） ---------- */
+  .qa { margin-top: 12px; max-width: 760px; border-top: 1px solid var(--line); }
+  .qa > div {
+    display: grid;
+    grid-template-columns: minmax(0, 15em) minmax(0, 1fr);
+    gap: 2px 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .qa dt { font-weight: 700; }
+  .qa dd { color: var(--ink-2); }
+  .qa dd::before { content: "→ "; color: var(--accent); font-weight: 700; }
+  .qa .wide { grid-column: 1 / -1; }
+  .qa .wide::before { content: none; }
+  .qa .marks > li { font-size: 15px; color: var(--ink); }
+
+  /* ---------- 奥付 ---------- */
+  .colophon {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 30px 24px 64px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    justify-content: space-between;
+  }
+  .colophon .mark { font-weight: 900; letter-spacing: .02em; color: var(--ink); }
+  /* リンク名の途中で折り返さない */
+  .colophon a { white-space: nowrap; }
+
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; gap: 0; padding-bottom: 64px; }
+    .toc {
+      position: static;
+      padding: 30px 0 18px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .toc ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 12px; }
+    .doc { padding-top: 32px; }
+  }
+  @media (max-width: 560px) {
+    .cover { padding: 60px 16px 40px; }
+    .shell, .colophon { padding-left: 16px; padding-right: 16px; }
+    .toc ol { grid-template-columns: 1fr 1fr; }
+    /* 番号の列を細くし、写真は番号の下から横幅いっぱいに使う */
+    .steps > li { grid-template-columns: 30px minmax(0, 1fr); gap: 0 10px; }
+    .steps > li::before { font-size: 22px; padding-top: 5px; }
+    .steps > li > .fig, .steps > li > .marks { grid-column: 1 / -1; }
+    .pair { grid-template-columns: 1fr; }
+    .spec > div { grid-template-columns: 5.5em minmax(0, 1fr); gap: 2px 12px; }
+    /* 狭い画面では赤枠と番号を一回り小さく（枠が中身を隠さないように） */
+    .mk { border-width: 2px; border-radius: 6px; }
+    .marks > li::before { width: 20px; height: 20px; font-size: 11px; }
+    .pipe { gap: 14px; }
+    .pipe > span { font-size: 13px; min-height: 52px; }
+    .pipe > span:not(:last-child)::after { right: -11px; width: 7px; height: 7px; }
+    .qa > div { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="cover-inner">
+    <div class="cover-eyebrow">取扱説明書（Mac版）</div>
+    <h1>CurtainCall</h1>
+    <p class="cover-sub"><span class="nobr">メディアを挿すだけで、</span><span class="nobr">コピー・検証から</span><span class="nobr">編集ソフトへの取り込みまで。</span></p>
+    <div class="cover-meta">
+      <span>バージョン <b>1.0.0</b></span>
+      <span>発行 <b>Zmotions 岡崎 聡</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+
+  <nav class="toc" aria-label="目次">
+    <div class="toc-title">目次</div>
+    <ol>
+      <li><a href="#install">1　インストール</a></li>
+      <li><a href="#project">2　案件を作る</a></li>
+      <li><a href="#insert">3　メディアを挿す</a></li>
+      <li><a href="#eject">4　抜いてOKで抜く</a></li>
+      <li><a href="#reinsert">5　もう一度挿す</a></li>
+      <li><a href="#import">6　編集ソフトへ</a></li>
+      <li class="sub"><a href="#editor">DaVinciの初期設定</a></li>
+      <li class="sub"><a href="#premiere">Premiereの初期設定</a></li>
+      <li><a href="#settings">7　設定</a></li>
+      <li><a href="#help">8　困ったとき</a></li>
+    </ol>
+  </nav>
+
+  <main class="doc">
+
+    <section class="chapter" id="install">
+      <div class="chapter-no">01</div>
+      <h2>インストールとキーの登録</h2>
+      <ol class="steps">
+        <li>
+          <div class="step-title"><a href="https://curtaincall.zmotions.net/">購入ページ</a>でキーを購入</div>
+          <p class="note">キーは画面とメール（<code>license@zmotions.net</code>）で届きます。</p>
+        </li>
+        <li>
+          <div class="step-title"><a href="https://github.com/SatoshiOkazaki/curtaincall/releases/latest/download/CurtainCall-mac.dmg"><code>CurtainCall-mac.dmg</code></a> を開く</div>
+        </li>
+        <li>
+          <div class="step-title">アプリケーションフォルダへドラッグ</div>
+          <figure class="fig">
+            <img src="manual-shots/install-drag.jpg" width="1100" height="290" loading="lazy" alt="CurtainCall-mac.dmg を開いた画面。右の CurtainCall アイコンから左の Applications フォルダへ向かう赤い矢印" />
+          </figure>
+        </li>
+        <li>
+          <div class="step-title">アプリを起動</div>
+        </li>
+        <li>
+          <div class="step-title">キーを登録</div>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/license-unregistered.jpg" width="1343" height="896" loading="lazy" alt="登録前の設定タブ。赤枠は［設定］タブとライセンスキーの入力欄" />
+              <span class="mk" style="left:41.47%;top:4.58%;width:6.70%;height:6.70%" aria-hidden="true"></span>
+              <span class="mk" style="left:5.96%;top:40.74%;width:47.58%;height:7.14%" aria-hidden="true"></span>
+            </div>
+          </figure>
+          <ol class="marks">
+            <li>［設定］を開く</li>
+            <li>キーを貼り付ける（キーは<a href="https://curtaincall.zmotions.net/">購入ページ</a>で購入）</li>
+            <li>［ライセンスを登録］を押す</li>
+          </ol>
+        </li>
+      </ol>
+    </section>
+
+    <section class="chapter" id="project">
+      <div class="chapter-no">02</div>
+      <h2>案件を作る</h2>
+      <ol class="steps">
+        <li>
+          <div class="step-title">［案件］タブで作成</div>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/project-create.jpg" width="1333" height="896" loading="lazy" alt="案件タブの「新規案件を作成」。案件名に 2026-11-01_サンプル様、保存先は［フォルダ選択］で選ぶ。下に［作成して開く］ボタン" />
+            </div>
+          </figure>
+          <ol class="marks">
+            <li>案件名を入れる（例：日付_お名前）</li>
+            <li>保存先のフォルダを選ぶ</li>
+            <li>［作成して開く］を押す</li>
+          </ol>
+          <p class="note">選んだフォルダの中に、Acam_1 などのフォルダが作られます。案件ごとに<span class="nobr">別のフォルダを選んでください。</span></p>
+        </li>
+        <li>
+          <div class="step-title">メイン画面が開く</div>
+          <figure class="fig">
+            <img src="manual-shots/main-project-open.jpg" width="1343" height="896" loading="lazy" alt="案件「2026-11-01_サンプル様」を開いたメイン画面。挿入中のメディアと取り込み履歴はまだ空" />
+            <figcaption>準備完了です。あとはメディアを挿すだけです。</figcaption>
+          </figure>
+        </li>
+      </ol>
+    </section>
+
+    <section class="chapter" id="insert">
+      <div class="chapter-no">03</div>
+      <h2>メディアを挿す</h2>
+      <p class="lead">カードリーダーにメディアを挿すと、コピーと照合が自動で始まります。</p>
+      <ol class="steps">
+        <li>
+          <div class="step-title">メディアを挿す</div>
+        </li>
+        <li>
+          <div class="step-title">カメラを登録<span class="tag">初めてのカメラだけ</span></div>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/camera-register.jpg" width="1343" height="896" loading="lazy" alt="「新しいカメラを検出しました」の画面。機種 ILCE-7M4、クリップ数 2。ラベルに Acam、色を選ぶ欄。赤枠は［登録して取り込み開始］ボタン" />
+              <span class="mk" style="left:32.24%;top:59.26%;width:23.08%;height:9.38%" aria-hidden="true"></span>
+            </div>
+          </figure>
+          <ol class="marks">
+            <li>任意のカメラ名を登録（例：Acam、田中B など）</li>
+            <li>カラーを選択</li>
+            <li>［登録して取り込み開始］を押す</li>
+          </ol>
+          <p class="note">登録はカメラ1台につき最初の1回だけです。次からは挿すだけで始まります（別の案件でも同じです）。</p>
+          <p class="note">カメラは、映像ファイルのメタデータに記録された本体固有の情報で見分けます。同じ機種が複数台あっても別のカメラとして扱い、メディアを差し替えて使っても正しく判別します。</p>
+        </li>
+      </ol>
+
+      <h3 id="overlay">画面右下のオーバーレイウィンドウ</h3>
+      <p>メディアを挿すと、画面右下にオーバーレイウィンドウが出ます。編集ソフトを全画面表示にしていても、その上に表示されます。オーバーレイウィンドウが出てもキーボードの入力先は編集ソフトのままなので、作業を止める必要はありません。</p>
+      <figure class="fig ov">
+        <img src="manual-shots/overlay-eject-ok.jpg" width="643" height="283" loading="lazy" alt="オーバーレイウィンドウ。Acam、右上に「⏏ 抜いてOK」、600 MB / 600 MB、100%、［DaVinci Resolveへ取り込み 2］ボタン" />
+      </figure>
+      <ul class="points">
+        <li>右上に状態が出ます（コピー中 → 検証中 → ⏏ 抜いてOK）。</li>
+        <li>ボタンで編集ソフトへ取り込めます（<a href="#import">6章</a>）。</li>
+        <li>オーバーレイウィンドウをクリックすると、メイン画面が開きます。</li>
+        <li>取り込みが終わっても消えません。閉じるときは右上の × を押します<span class="nobr">（編集ソフトへ送ると自動で閉じます）。</span></li>
+      </ul>
+    </section>
+
+    <section class="chapter" id="eject">
+      <div class="chapter-no">04</div>
+      <h2>「⏏ 抜いてOK」で抜く</h2>
+      <p class="lead">コピーと照合が終わると、アプリがメディアを取り外します。完了音が鳴り「⏏ 抜いてOK」が出たら、そのまま抜いてください。（<b>取り出し操作は必要ありません。</b>）</p>
+      <figure class="fig">
+        <img src="manual-shots/main-card-eject-ok.jpg" width="1343" height="896" loading="lazy" alt="メイン画面。挿入中のメディア Acam が 600 MB / 600 MB、100%、2/2 クリップで完了し「⏏ 抜いてOK」。取り込み履歴に「Acam_1 未取込 2クリップ」" />
+        <figcaption>履歴の<span class="state pend">未取込</span>は、まだ編集ソフトへ送っていないことを表します。</figcaption>
+      </figure>
+    </section>
+
+    <section class="chapter" id="reinsert">
+      <div class="chapter-no">05</div>
+      <h2>撮り足したら、もう一度挿す</h2>
+      <p class="lead">同じメディアを挿し直すと、前回までに取り込んだクリップは自動で飛ばし、<b>新しく撮ったクリップだけ</b>を取り込みます。</p>
+      <ul class="points">
+        <li>シーンごとにメディアをフォーマットしなくて大丈夫です。抜いて撮影を続け、また挿すだけです。</li>
+        <li>取り込み済みの分を待つ必要はありません（コピーするのは新しい分だけです）。</li>
+        <li>同じ素材が二重に入ることはありません（フォルダにも編集ソフトにも）。</li>
+        <li>どこまで取り込んだか覚えておく必要はありません。迷ったら挿してください。</li>
+      </ul>
+
+      <h3>しくみ</h3>
+      <dl class="spec">
+        <div><dt>判定</dt><dd>同じカメラで撮った、名前とサイズが同じファイルは取り込み済みとみなして飛ばします。</dd></div>
+        <div><dt>フォルダ</dt><dd>新しい分は Acam_2、Acam_3 … と別のフォルダに入ります。番号はカメラごとに続きます。</dd></div>
+        <div><dt>範囲</dt><dd>判定は案件ごとです。別の案件を開いて挿すと、メディアの中身をすべて取り込みます。</dd></div>
+      </dl>
+    </section>
+
+    <section class="chapter" id="import">
+      <div class="chapter-no">06</div>
+      <h2>編集ソフトへ取り込む</h2>
+      <ol class="steps">
+        <li>
+          <div class="step-title">編集ソフトを選ぶ</div>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/license-registered.jpg" width="1333" height="896" loading="lazy" alt="登録後の設定タブ。赤枠は「使用する編集ソフト」で DaVinci Resolve か Premiere Pro を選ぶ欄" />
+              <span class="mk" style="left:6.15%;top:43.30%;width:87.92%;height:24.11%" aria-hidden="true"></span>
+            </div>
+            <figcaption>使用する編集ソフトを選びます。</figcaption>
+          </figure>
+        </li>
+      </ol>
+
+      <h3 id="editor">DaVinci Resolve の初期設定</h3>
+      <div class="dgs stack">
+        <section class="dg">
+          <div class="ed-head"><h4>DaVinci Resolve</h4><span>Studio版のみ</span></div>
+          <ol class="mini">
+            <li>環境設定 → システム → 一般</li>
+            <li>「外部スクリプトに使用」を<b>ローカル</b></li>
+            <li>Resolve を再起動</li>
+          </ol>
+        </section>
+      </div>
+      <figure class="fig">
+        <div class="anno">
+          <img src="manual-shots/resolve-scripting.jpg" width="1600" height="617" loading="lazy" alt="DaVinci Resolve の環境設定（システム → 一般）。赤枠は「外部スクリプトに使用」の選択欄で、なし・ローカル・ネットワークのうちローカルを選んでいる" />
+          <span class="mk" style="left:35.50%;top:29.17%;width:25.25%;height:29.50%" aria-hidden="true"></span>
+        </div>
+        <figcaption>DaVinci Resolve の環境設定（システム → 一般）</figcaption>
+      </figure>
+
+      <h3 id="premiere">Premiere Pro の初期設定（連携パネル）</h3>
+      <p class="dg-ex">対応：Premiere Pro 2020 以降</p>
+      <ol class="steps">
+        <li>
+          <div class="step-title">CurtainCall の［設定］で連携パネルをインストール</div>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/premiere-settings-install.jpg" width="1600" height="528" loading="lazy" alt="設定タブの「使用する編集ソフト」。赤枠は選択された Premiere Pro と、「Premiere連携パネル：未インストールです」の横の［連携パネルをインストール］ボタン" />
+              <span class="mk" style="left:5.94%;top:45.83%;width:88.06%;height:23.48%" aria-hidden="true"></span>
+              <span class="mk" style="left:71.94%;top:75.76%;width:20.31%;height:13.83%" aria-hidden="true"></span>
+            </div>
+          </figure>
+          <ol class="marks">
+            <li>Premiere Pro を選ぶ</li>
+            <li>［連携パネルをインストール］を押す</li>
+          </ol>
+          <p class="note">「インストール済みです」と出れば完了です。</p>
+        </li>
+        <li>
+          <div class="step-title">Premiere Pro を再起動</div>
+          <p class="note">起動中なら一度終了してください（パネルは起動時に読み込まれます）。</p>
+        </li>
+        <li>
+          <div class="step-title">ウィンドウ → エクステンション → CurtainCall</div>
+          <p class="note">Premiere でプロジェクトを開いてから操作してください。</p>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/premiere-menu.jpg" width="1040" height="330" loading="lazy" alt="Premiere Pro のメニュー「ウィンドウ」→「エクステンション」。赤枠はサブメニューの CurtainCall" />
+              <span class="mk" style="left:67.60%;top:57.88%;width:31.63%;height:16.36%" aria-hidden="true"></span>
+            </div>
+          </figure>
+        </li>
+        <li>
+          <div class="step-title">パネルが開く</div>
+          <p class="note">「監視中…」と出ていれば準備完了です。</p>
+          <p class="note">パネルは最小化しても動作します。</p>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/premiere-panel.jpg" width="1600" height="929" loading="lazy" alt="Premiere Pro の画面。赤枠は左上に開いた CurtainCall パネル" />
+              <span class="mk" style="left:6.25%;top:4.20%;width:22.13%;height:33.80%" aria-hidden="true"></span>
+            </div>
+          </figure>
+        </li>
+      </ol>
+
+      <h3>取り込む</h3>
+      <ol class="steps" style="counter-reset: step 1">
+        <li>
+          <div class="step-title">編集ソフト（DaVinci Resolve/Premiere Pro）でプロジェクトを開く</div>
+        </li>
+        <li>
+          <div class="step-title">アプリ本体またはオーバーレイウィンドウで［DaVinci Resolve/Premiere Proへ取り込み］を押す</div>
+          <p class="note">ボタンの数字は、まだ送っていないクリップの数です。<span class="state pend">未取込</span>の分をまとめて送ります。</p>
+          <figure class="fig">
+            <div class="anno">
+              <img src="manual-shots/main-after-diff.jpg" width="1343" height="896" loading="lazy" alt="メイン画面。赤枠は右上の［DaVinci Resolveへ取り込み 3］ボタン" />
+              <span class="mk" style="left:61.13%;top:15.63%;width:32.69%;height:9.82%" aria-hidden="true"></span>
+            </div>
+          </figure>
+          <figure class="fig ov">
+            <div class="anno">
+              <img src="manual-shots/overlay-diff-eject-ok.jpg" width="643" height="283" loading="lazy" alt="オーバーレイウィンドウ。赤枠は［DaVinci Resolveへ取り込み 3］ボタン" />
+              <span class="mk" style="left:5.44%;top:44.17%;width:88.65%;height:24.03%" aria-hidden="true"></span>
+            </div>
+          </figure>
+        </li>
+        <li>
+          <div class="step-title">ビンに入る</div>
+          <p class="note">送った分は<span class="state done">取込済</span>になります。ビンの分け方とタイムラインは<a href="#settings">設定</a>で選べます。</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="chapter" id="settings">
+      <div class="chapter-no">07</div>
+      <h2>設定</h2>
+      <h3>取り込み方法（ビンの分け方）</h3>
+      <figure class="fig">
+        <img src="manual-shots/settings-bins.jpg" width="1568" height="523" loading="lazy" alt="CurtainCall の設定タブ「取り込み方法」。すべて1つのビンにまとめる（選択中）／取り込んだフォルダごとにビンを分ける／カメラをグループでまとめる の3つから選ぶ" />
+        <figcaption>［設定］の「取り込み方法」で選びます。</figcaption>
+      </figure>
+      <p class="dg-ex">例：撮影者名を付けた3台<span class="nobr">（田中Acam・田中Bcam・佐藤Acam）</span></p>
+      <p class="bins-legend" aria-hidden="true"><span>フォルダ</span>→<span class="bin">ビン</span></p>
+      <div class="dgs wide" style="margin-top:6px">
+        <figure class="dg">
+          <figcaption class="dg-title"><span class="nobr">すべて1つのビンに</span><span class="nobr">まとめる</span></figcaption>
+          <div class="bins" role="img" aria-label="田中Acam_1、田中Bcam_1、佐藤Acam_1 の3フォルダが、1つのビン Import_1 に入る">
+            <div class="col"><span class="chip ca">田中Acam_1</span><span class="chip cb">田中Bcam_1</span><span class="chip cc">佐藤Acam_1</span></div>
+            <svg viewBox="0 0 100 106" preserveAspectRatio="none" aria-hidden="true"><path d="M0 15C55 15 45 53 100 53"/><path d="M0 53H100"/><path d="M0 91C55 91 45 53 100 53"/></svg>
+            <div class="col"><span class="chip bin" style="grid-row:1/4">Import_1</span></div>
+          </div>
+          <p class="dg-note">押すたびに <code>Import_2</code> …と増えます。</p>
+        </figure>
+        <figure class="dg">
+          <figcaption class="dg-title"><span class="nobr">取り込んだフォルダごとに</span><span class="nobr">ビンを分ける</span></figcaption>
+          <div class="bins" role="img" aria-label="田中Acam_1、田中Bcam_1、佐藤Acam_1 がそれぞれ同じ名前のビンに入る">
+            <div class="col"><span class="chip ca">田中Acam_1</span><span class="chip cb">田中Bcam_1</span><span class="chip cc">佐藤Acam_1</span></div>
+            <svg viewBox="0 0 100 106" preserveAspectRatio="none" aria-hidden="true"><path d="M0 15H100"/><path d="M0 53H100"/><path d="M0 91H100"/></svg>
+            <div class="col"><span class="chip bin">田中Acam_1</span><span class="chip bin">田中Bcam_1</span><span class="chip bin">佐藤Acam_1</span></div>
+          </div>
+        </figure>
+        <figure class="dg">
+          <figcaption class="dg-title"><span class="nobr">カメラを</span><span class="nobr">グループでまとめる</span></figcaption>
+          <div class="bins" role="img" aria-label="田中Acam_1 と 田中Bcam_1 がグループ「田中」のビン 田中_1 に、佐藤Acam_1 がグループ「佐藤」のビン 佐藤_1 に入る">
+            <div class="col"><span class="chip ca">田中Acam_1</span><span class="chip cb">田中Bcam_1</span><span class="chip cc">佐藤Acam_1</span></div>
+            <svg viewBox="0 0 100 106" preserveAspectRatio="none" aria-hidden="true"><path d="M0 15C55 15 45 34 100 34"/><path d="M0 53C55 53 45 34 100 34"/><path d="M0 91H100"/></svg>
+            <div class="col"><span class="chip bin" style="grid-row:1/3">田中_1</span><span class="chip bin" style="grid-row:3">佐藤_1</span></div>
+          </div>
+          <p class="dg-note">田中・佐藤＝グループ名</p>
+        </figure>
+      </div>
+
+      <h3 id="timeline">取り込み後のタイムライン</h3>
+      <figure class="fig">
+        <img src="manual-shots/settings-timeline.jpg" width="1568" height="523" loading="lazy" alt="CurtainCall の設定タブ「取り込み後のタイムライン」。作らない（選択中）／TC順に1本のタイムラインへ並べる／カメラごとにトラックを分けてTC同期配置 の3つから選ぶ" />
+        <figcaption>［設定］の「取り込み後のタイムライン」で選びます。</figcaption>
+      </figure>
+      <div class="dgs stack">
+        <figure class="dg">
+          <figcaption class="dg-title">作らない</figcaption>
+          <div class="tl" role="img" aria-label="タイムラインは作らず、ビンに入れるだけ">
+            <div class="lane empty">ビンに入るだけ</div>
+          </div>
+        </figure>
+        <figure class="dg">
+          <figcaption class="dg-title"><span class="nobr">TC順に1本の</span><span class="nobr">タイムラインへ並べる</span></figcaption>
+          <div class="tl" role="img" aria-label="全カメラの素材を、タイムコード順に V1 の1トラックへ隙間なく並べる（田中Acam、田中Bcam、佐藤Acam、田中Acam の順）">
+            <div class="trk"><b>V1</b><div class="lane"><i class="ca" style="left:0;width:28%">田中Acam</i><i class="cb" style="left:28%;width:22%">田中Bcam</i><i class="cc" style="left:50%;width:28%">佐藤Acam</i><i class="ca" style="left:78%;width:22%">田中Acam</i></div></div>
+          </div>
+        </figure>
+        <figure class="dg">
+          <figcaption class="dg-title"><span class="nobr">カメラごとに</span><span class="nobr">トラックを分けて</span><span class="nobr">TC同期配置</span></figcaption>
+          <div class="tl" role="img" aria-label="田中Acam は V1、田中Bcam は V2、佐藤Acam は V3 のトラックに分け、撮影した実時間の位置に配置する">
+            <div class="trk"><b>V3</b><div class="lane"><i class="cc" style="left:38%;width:28%">佐藤Acam</i></div></div>
+            <div class="trk"><b>V2</b><div class="lane"><i class="cb" style="left:10%;width:24%">田中Bcam</i><i class="cb" style="left:64%;width:24%">田中Bcam</i></div></div>
+            <div class="trk"><b>V1</b><div class="lane"><i class="ca" style="left:0;width:26%">田中Acam</i><i class="ca" style="left:32%;width:24%">田中Acam</i></div></div>
+          </div>
+          <p class="dg-note warn">各カメラのTCを合わせておいてください。</p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="chapter" id="help">
+      <div class="chapter-no">08</div>
+      <h2>困ったとき</h2>
+
+      <dl class="qa">
+        <div>
+          <dt>メディアを挿しても取り込まれない</dt>
+          <dd class="wide">
+            <figure class="fig">
+              <div class="anno">
+                <img src="manual-shots/main-unregistered.jpg" width="1343" height="896" loading="lazy" alt="メイン画面。赤い帯の［ライセンスを登録する］と「案件が開かれていません」の表示。赤枠は右上の「有効」の切り替え" />
+                <span class="mk" style="left:90.25%;top:4.80%;width:7.74%;height:6.25%" aria-hidden="true"></span>
+              </div>
+            </figure>
+            <ol class="marks">
+              <li>赤い帯 → キーを登録</li>
+              <li>「無効」なら押して「有効」に</li>
+              <li>案件を開く（メディアは挿したままでよい）</li>
+            </ol>
+          </dd>
+        </div>
+        <div>
+          <dt>「⏏ 抜いてOK」が出ない</dt>
+          <dd>コピー・照合の途中です。「エラー」と出たら、オーバーレイウィンドウをクリックして内容を確認してください。</dd>
+        </div>
+        <div>
+          <dt>エラーで止まった（空き容量不足など）</dt>
+          <dd>原因を解消してから、Finder で取り出して挿し直してください。照合済みの分は飛ばします。</dd>
+        </div>
+        <div>
+          <dt>「完了・取り出しはFinderから」と出た</dt>
+          <dd>取り込みは完了しています。Finder で取り出してから抜いてください。</dd>
+        </div>
+        <div>
+          <dt>違うメディアを挿した</dt>
+          <dd>登録画面なら［このメディアは取り込まない］を押してください。コピー中なら、メイン画面の［停止］を2回押します（その回のコピーは残りません）。</dd>
+        </div>
+        <div>
+          <dt>編集ソフトに取り込めない</dt>
+          <dd><a href="#editor">初期設定</a>を確認してください。アプリを更新したあとは、Premiere を再起動してください。</dd>
+        </div>
+        <div>
+          <dt>Premiere に CurtainCall が出ない</dt>
+          <dd>Premiere を再起動してください。それでも出なければ、CurtainCall の［再インストール］を押してから、もう一度再起動してください。</dd>
+        </div>
+        <div>
+          <dt>ビンが見当たらない</dt>
+          <dd>プロジェクトの最上階層か、直前に選んでいたビンの中にあります。</dd>
+        </div>
+        <div>
+          <dt>もう一度送りたい</dt>
+          <dd>取り込み履歴で行を選んでから、取り込みボタンを押してください。</dd>
+        </div>
+        <div>
+          <dt>キーをなくした・不具合</dt>
+          <dd><a href="mailto:support@zmotions.net">support@zmotions.net</a> までご連絡ください（不具合のときは、機種とスクリーンショットを添えてください）。</dd>
+        </div>
+      </dl>
+    </section>
+
+  </main>
+</div>
+
+<footer class="colophon">
+  <span class="mark">CurtainCall</span>
+  <span>取扱説明書（Mac版） — バージョン 1.0.0　<a href="manual.html">取扱説明書トップ</a></span>
+  <span><a href="tokushoho.html">特定商取引法に基づく表記</a>　<a href="terms.html">利用規約</a>　<a href="privacy.html">プライバシーポリシー</a></span>
+  <span>Zmotions 岡崎 聡</span>
+</footer>
+
+</body>
+</html>

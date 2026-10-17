@@ -4,13 +4,18 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>CurtainCall 取扱説明書</title>
-<meta name="description" content="CurtainCall（婚礼当日エンドロールのためのカード取り込み自動化アプリ）の取扱説明書。導入から当日の運用、DaVinci Resolve / Premiere Pro 連携、トラブルシューティングまで。" />
+<meta name="description" content="CurtainCall（婚礼当日エンドロールのためのメディア取り込み自動化アプリ）の取扱説明書。お使いのパソコンを選んで、取扱説明書をお読みください。" />
 <meta property="og:title" content="CurtainCall 取扱説明書" />
-<meta property="og:description" content="カードを挿すだけで検出・コピー・検証。当日の運用手順と編集ソフト連携の設定を一冊にまとめました。" />
+<meta property="og:description" content="お使いのパソコンを選んで、画面つきの簡単な取扱説明書をお読みください。" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
+  /*
+    取扱説明書の入口ページ。お使いのパソコン（Mac／Windows）を選んで各版へ進むだけの短いページ。
+    デザイントークン・フォント・表紙・奥付は manual-mac.html と同じ。ライト固定、外部スクリプトなし。
+    Windows 版の取扱説明書ができたら、準備中のボタンを manual-win.html へのリンク（btn-primary）に差し替える。
+  */
   :root {
     color-scheme: light;
     /* 面 */
@@ -30,13 +35,6 @@
     --aurora-1: #A9CFDA;
     --aurora-2: #EEE2A8;
     --aurora-3: #D3BFE2;
-    /* 注意・状態（青とは別枠） */
-    --caution: #9A5B00;
-    --caution-soft: #FBF0DC;
-    --ok: #1B7A43;
-    --ok-soft: #E3F3E9;
-    --err: #B3261E;
-    --err-soft: #FBEAE9;
     /* 書体 */
     --font: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
     --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -47,12 +45,13 @@
     background: var(--ground);
     color-scheme: light;
   }
-  html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
     * { animation: none !important; transition: none !important; }
   }
   body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     background: var(--ground);
     color: var(--ink);
     font-family: var(--font);
@@ -69,7 +68,7 @@
   .cover {
     position: relative;
     isolation: isolate;
-    padding: 88px 24px 56px;
+    padding: 72px 24px 44px;
     text-align: center;
     overflow: hidden;
     background: var(--aurora-base);
@@ -102,355 +101,59 @@
     margin-top: 16px;
     text-wrap: balance;
   }
-  .cover-sub {
-    color: var(--ink-2);
-    font-size: 16px;
-    line-height: 1.9;
-    margin-top: 18px;
-    text-wrap: balance;
-  }
-  .cover-meta {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px 18px;
-    margin-top: 28px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
-    font-size: 12.5px;
-    color: var(--ink-2);
-    letter-spacing: .02em;
-  }
-  .cover-meta b { color: var(--ink); font-weight: 700; }
 
-  /* ---------- 全体レイアウト ---------- */
-  .shell {
-    max-width: 1080px;
+  /* ---------- パソコンの選択 ---------- */
+  .choose {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 720px;
     margin: 0 auto;
-    padding: 0 24px 96px;
-    display: grid;
-    grid-template-columns: 208px minmax(0, 1fr);
-    gap: 48px;
-    align-items: start;
+    padding: 56px 24px 96px;
+    text-align: center;
   }
-  /* 目次：本文に対する索引なので、読み進めても常に見える位置に置く */
-  .toc {
-    position: sticky;
-    top: 28px;
-    padding-top: 52px;
-    font-size: 13.5px;
-    line-height: 1.75;
-  }
-  .toc-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .2em;
-    color: var(--accent);
-    text-indent: .2em;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 12px;
-  }
-  .toc ol { list-style: none; display: flex; flex-direction: column; gap: 3px; }
-  .toc a {
-    display: block;
-    color: var(--ink-2);
-    text-decoration: none;
-    padding: 3px 0 3px 12px;
-    border-left: 2px solid transparent;
-    transition: color 150ms linear, border-color 150ms linear;
-  }
-  .toc a:hover, .toc a:focus-visible { color: var(--ink); border-left-color: var(--accent); }
-
-  .doc { padding-top: 52px; min-width: 0; }
-
-  /* ---------- 章 ---------- */
-  .chapter { padding-bottom: 8px; margin-bottom: 56px; }
-  .chapter + .chapter { border-top: 1px solid var(--line); padding-top: 44px; }
-  .chapter-no {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .2em;
-    color: var(--accent);
-  }
-  .chapter > h2 {
-    font-size: clamp(28px, 3.4vw, 40px);
+  .choose h2 {
+    font-size: clamp(22px, 3vw, 28px);
     font-weight: 900;
-    line-height: 1.35;
-    margin: 8px 0 18px;
+    line-height: 1.45;
     text-wrap: balance;
   }
-  .chapter h3 {
-    font-size: 21px;
-    font-weight: 700;
-    line-height: 1.5;
-    margin: 34px 0 10px;
-  }
-  .chapter h4 {
-    font-size: 14.5px;
-    font-weight: 700;
-    letter-spacing: .04em;
-    color: var(--accent);
-    margin: 22px 0 6px;
-  }
-  .doc p { max-width: 62ch; }
-  .doc p + p { margin-top: 12px; }
-  .lead { color: var(--ink-2); }
-
-  .doc ul, .doc ol { margin: 10px 0 0 0; padding-left: 1.35em; max-width: 62ch; }
-  .doc li { margin-bottom: 4px; }
-  .doc li::marker { color: var(--accent); }
-  .doc ul ul, .doc ol ul { margin-top: 4px; }
-
-  code {
-    font-family: var(--mono);
-    font-size: .875em;
-    background: var(--accent-soft);
-    border: 1px solid rgba(31,63,209,.18);
-    border-radius: 4px;
-    padding: .1em .38em;
-    color: var(--accent-deep);
-    white-space: nowrap;
-  }
-  kbd {
-    font-family: var(--mono);
-    font-size: .82em;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-bottom-width: 2px;
-    border-radius: 4px;
-    padding: .12em .45em;
-  }
-
-  /* ---------- 手順（本当に順序が意味を持つ箇所だけ大きい数字にする） ---------- */
-  .steps { list-style: none; counter-reset: step; margin: 18px 0 0; padding: 0; max-width: 62ch; border-top: 1px solid var(--line); }
-  .steps > li {
-    counter-increment: step;
-    display: grid;
-    grid-template-columns: 72px minmax(0, 1fr);
-    gap: 0 18px;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--line);
-  }
-  /* 番号(擬似要素)は1列目に置き、実際の子要素(見出し・本文・note)はすべて2列目へ寄せる。
-     そうしないとgridの自動配置で2つ目以降の子要素が1列目(幅72px)に落ちてしまう。 */
-  .steps > li::before {
-    content: counter(step, decimal-leading-zero);
-    grid-column: 1;
-    grid-row: 1 / -1;
-    font-size: 40px;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-    align-self: start;
-  }
-  .steps > li > * { grid-column: 2; }
-  .step-title { font-weight: 700; font-size: 16px; }
-  .steps p, .steps ul { margin-top: 6px; }
-  .steps .note { color: var(--ink-2); font-size: 14px; }
-
-  /* ---------- 注意・補足 ---------- */
-  .callout {
-    margin: 20px 0 0;
-    padding: 14px 18px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    font-size: 15px;
-    max-width: 62ch;
-  }
-  .callout.warn { border-color: var(--caution); }
-  .callout.stop { border-color: var(--err); }
-  .callout.safe { border-color: var(--ok); }
-  .callout-label {
-    display: block;
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: .14em;
-    color: var(--accent);
-    margin-bottom: 4px;
-  }
-  .callout.warn .callout-label { color: var(--caution); }
-  .callout.stop .callout-label { color: var(--err); }
-  .callout.safe .callout-label { color: var(--ok); }
-  .callout p { max-width: none; }
-
-  /* ---------- 表 ---------- */
-  .table-wrap { overflow-x: auto; margin-top: 18px; border: 1px solid var(--line); border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14.5px; }
-  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line-soft); vertical-align: top; line-height: 1.7; }
-  thead th {
-    background: var(--ground);
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: .1em;
-    color: var(--ink-2);
-    white-space: nowrap;
-  }
-  tbody tr:last-child td { border-bottom: none; }
-  td b { font-weight: 700; }
-  .nowrap { white-space: nowrap; }
-
-  /* ---------- 状態バッジ（アプリ画面の表示と対応させる。青は装飾に流用しない） ---------- */
-  .state {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .02em;
-    padding: 1px 9px;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-  .state.copy { color: var(--caution); background: var(--caution-soft); }
-  .state.verify { color: var(--caution); background: var(--caution-soft); }
-  .state.safe { color: var(--ok); background: var(--ok-soft); }
-  .state.err { color: var(--err); background: var(--err-soft); }
-
-  /* ---------- 画面図：アプリ本体の見た目（紺地UI）をそのまま再現する。ページのトークンとは独立させる ---------- */
-  .shot { margin: 22px 0 0; max-width: 62ch; overflow-x: auto; }
-  .shot-frame {
-    min-width: 440px;
-    background: #0b0f14;
-    border: 1px solid #2a3441;
-    border-radius: 10px;
-    overflow: hidden;
-    font-size: 13px;
-    line-height: 1.55;
-    color: #f1f5f9;
-    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
-  }
-  .shot-cap { margin-top: 9px; font-size: 12.5px; color: var(--ink-2); }
-  .sh-titlebar {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 11px;
-    background: #141a22;
-    border-bottom: 1px solid #2a3441;
-  }
-  .sh-light { width: 9px; height: 9px; border-radius: 50%; background: #2a3441; }
-  .sh-title { margin: 0 auto; font-size: 12px; color: #94a3b8; padding-right: 33px; }
-  .sh-topbar {
-    display: flex; align-items: center; gap: 14px;
-    padding: 10px 14px;
-    background: #141a22;
-    border-bottom: 1px solid #2a3441;
-  }
-  .sh-brand { font-weight: 800; }
-  .sh-tabs { display: flex; gap: 3px; }
-  .sh-tab { padding: 4px 10px; border-radius: 8px; color: #94a3b8; }
-  .sh-tab.on { background: #4f8ff7; color: #fff; font-weight: 700; }
-  .sh-power {
-    margin-left: auto;
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 3px 11px;
-    font-size: 12px; font-weight: 700;
-    border: 1.5px solid #35c46a; border-radius: 999px;
-    background: rgba(53,196,106,.12);
-  }
-  .sh-pdot { width: 8px; height: 8px; border-radius: 50%; background: #35c46a; box-shadow: 0 0 6px #35c46a; }
-  .sh-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 13px; }
-  .sh-head { display: flex; align-items: center; gap: 12px; }
-  .sh-proj { font-size: 17px; font-weight: 800; }
-  .sh-btn {
-    margin-left: auto;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 15px;
-    background: #4f8ff7; color: #fff; font-weight: 700;
-    border-radius: 10px;
-  }
-  .sh-badge { padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,.25); font-size: 11px; }
-  .sh-h { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; color: #94a3b8; }
-  .sh-stack { display: flex; flex-direction: column; gap: 7px; }
-  .sh-card {
-    display: flex; flex-direction: column; gap: 7px;
-    padding: 11px 13px;
-    background: #1b232e; border: 1px solid #2a3441; border-radius: 12px;
-  }
-  .sh-cam { display: flex; align-items: center; gap: 8px; font-weight: 700; }
-  .sh-cdot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-  .sh-state { margin-left: auto; font-size: 12px; font-weight: 700; color: #f59e0b; }
-  .sh-state.ok { color: #22c55e; }
-  .sh-bar { height: 7px; border-radius: 4px; background: #2a3441; overflow: hidden; }
-  .sh-fill { height: 100%; border-radius: 4px; background: #f59e0b; }
-  .sh-fill.ok { background: #22c55e; }
-  .sh-meta { display: flex; justify-content: space-between; font-size: 11.5px; color: #94a3b8; font-variant-numeric: tabular-nums; }
-  .sh-item {
-    display: flex; align-items: center; gap: 9px;
-    padding: 9px 12px;
-    background: #1b232e; border: 1px solid #2a3441; border-radius: 10px;
-  }
-  .sh-item b { font-weight: 700; }
-  .sh-tag { padding: 0 7px; font-size: 11px; color: #94a3b8; border: 1px solid #2a3441; border-radius: 999px; }
-  .sh-right { margin-left: auto; font-size: 12px; color: #94a3b8; }
-  .sh-opt {
-    display: flex; gap: 10px;
-    padding: 10px 13px;
-    border: 1px solid #2a3441; border-radius: 12px;
-  }
-  .sh-opt.on { border-color: #4f8ff7; background: rgba(79,143,247,.13); }
-  .sh-radio { width: 13px; height: 13px; margin-top: 3px; flex: none; border: 1.5px solid #94a3b8; border-radius: 50%; }
-  .sh-opt.on .sh-radio { border-color: #4f8ff7; background: radial-gradient(circle, #4f8ff7 45%, transparent 48%); }
-  .sh-opt b { display: block; }
-  .sh-opt span { color: #94a3b8; font-size: 12px; }
-  .sh-preview { font-size: 12px; color: #94a3b8; padding-left: 2px; }
-  /* オーバーレイは実物と同じ小さな独立ウィンドウなので、枠ごと別に組む */
-  .shot.overlay { max-width: 320px; }
-  .shot.overlay .shot-frame { min-width: 0; background: #16181d; border-color: #2a2e38; }
-  .sh-ov { padding: 9px 11px; display: flex; flex-direction: column; gap: 7px; }
-  .sh-ovbtn {
-    margin-top: 2px; padding: 6px 10px;
-    text-align: center; font-size: 12px; font-weight: 700;
-    background: #3a72e8; color: #fff; border-radius: 8px;
-  }
-  .sh-ovbtn.off { background: #2a2e38; color: #5c6270; }
-  .sh-ovhint { text-align: center; font-size: 10.5px; color: #5c6270; }
-  /* モーダルは背後の画面が暗く落ちるので、それも含めて再現する */
-  .sh-modalwrap { padding: 26px 18px; background: rgba(6,8,11,.72); }
-  .sh-modal {
-    display: flex; flex-direction: column; gap: 11px;
-    padding: 16px 18px;
-    background: #141a22; border: 1px solid #2a3441; border-radius: 14px;
-  }
-  .sh-modal h4 { font-size: 15px; font-weight: 800; margin: 0; color: #f1f5f9; }
-  .sh-modal .sh-sub { font-size: 12px; color: #94a3b8; }
-  .sh-field {
-    padding: 8px 11px;
-    background: #0b0f14; border: 1px solid #2a3441; border-radius: 9px;
-    font-size: 13px;
-  }
-  .sh-field.ph { color: #64748b; }
-  .sh-swatches { display: flex; gap: 8px; }
-  .sh-sw { width: 20px; height: 20px; border-radius: 50%; }
-  .sh-sw.sel { box-shadow: 0 0 0 2px #0b0f14, 0 0 0 4px #4f8ff7; }
-
-  /* ---------- Q&A ---------- */
-  .qa { margin-top: 18px; max-width: 62ch; border-top: 1px solid var(--line); }
-  .qa details { border-bottom: 1px solid var(--line); }
-  .qa summary {
-    cursor: pointer;
+  /* 句の途中で折り返さない */
+  .nobr { display: inline-block; }
+  .choice-list {
     list-style: none;
-    padding: 13px 30px 13px 0;
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 24px;
+    margin-top: 32px;
+  }
+  .choice { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: 0 28px;
+    font-size: 16px;
     font-weight: 700;
-    font-size: 15.5px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 150ms linear, color 150ms linear;
   }
-  .qa summary::-webkit-details-marker { display: none; }
-  .qa summary::after {
-    content: "+";
-    position: absolute;
-    right: 4px; top: 12px;
-    font-family: var(--mono);
-    color: var(--accent);
-    font-size: 17px;
+  .btn-primary { background: var(--accent); color: #FFFFFF; }
+  .btn-primary:hover { background: var(--accent-deep); color: #FFFFFF; }
+  /* 押せない状態は aria-disabled と見た目（灰色・禁止カーソル・hover 変化なし）の両方で示す（index.html と同じ作り） */
+  .btn[aria-disabled="true"],
+  .btn[aria-disabled="true"]:hover {
+    background: var(--line);
+    color: var(--ink-2);
+    box-shadow: inset 0 0 0 1px rgba(22, 22, 26, .12);
+    cursor: not-allowed;
   }
-  .qa details[open] summary::after { content: "−"; }
-  .qa .answer { padding: 0 0 16px; color: var(--ink-2); font-size: 15px; }
-  .qa .answer strong { color: var(--ink); }
-  .qa .answer p + p { margin-top: 10px; }
+  .choice-note { font-size: 13.5px; line-height: 1.7; color: var(--ink-2); }
 
   /* ---------- 奥付 ---------- */
   .colophon {
+    width: 100%;
     max-width: 1080px;
     margin: 0 auto;
     padding: 30px 24px 64px;
@@ -463,22 +166,15 @@
     justify-content: space-between;
   }
   .colophon .mark { font-weight: 900; letter-spacing: .02em; color: var(--ink); }
+  /* リンク名の途中で折り返さない */
+  .colophon a { white-space: nowrap; }
 
-  @media (max-width: 860px) {
-    .shell { grid-template-columns: 1fr; gap: 0; padding-bottom: 64px; }
-    .toc {
-      position: static;
-      padding: 34px 0 0;
-      margin-bottom: 8px;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 20px;
-    }
-    .toc ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 12px; }
-    .doc { padding-top: 34px; }
-  }
   @media (max-width: 560px) {
-    /* 狭い幅では2列だと項目名が1〜2文字だけ折り返すため、1列に切り替える */
-    .toc ol { grid-template-columns: 1fr; }
+    .cover { padding: 56px 16px 36px; }
+    .choose { padding: 40px 16px 72px; }
+    .colophon { padding-left: 16px; padding-right: 16px; }
+    /* 狭い幅では1列に積む */
+    .choice-list { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 28px; }
   }
 </style>
 </head>
@@ -489,642 +185,26 @@
   <div class="cover-inner">
     <div class="cover-eyebrow">取扱説明書</div>
     <h1>CurtainCall</h1>
-    <p class="cover-sub">婚礼当日エンドロールのための、カード取り込み自動化アプリ。<br />カードを挿すだけで、検出・コピー・検証まで手を離せます。</p>
-    <div class="cover-meta">
-      <span>対象バージョン <b>0.1.3（β）</b></span>
-      <span>対応 <b>Apple Silicon Mac</b>／<b>Windows 10・11</b></span>
-      <span>発行 <b>Zmotions 岡崎 聡</b></span>
-    </div>
   </div>
 </header>
 
-<div class="shell">
-
-  <nav class="toc" aria-label="目次">
-    <div class="toc-title">目次</div>
-    <ol>
-      <li><a href="#about">1　このアプリについて</a></li>
-      <li><a href="#install">2　インストール</a></li>
-      <li><a href="#firstrun">3　最初の1回だけの設定</a></li>
-      <li><a href="#day">4　当日の流れ</a></li>
-      <li><a href="#screen">5　画面の見かた</a></li>
-      <li><a href="#settings">6　設定リファレンス</a></li>
-      <li><a href="#naming">7　フォルダとビンの名前</a></li>
-      <li><a href="#reimport">8　撮り込み直し・再送</a></li>
-      <li><a href="#safety">9　データを守る仕組み</a></li>
-      <li><a href="#limits">10　できないこと</a></li>
-      <li><a href="#trouble">11　困ったときは</a></li>
-      <li><a href="#report">12　不具合の報告</a></li>
-    </ol>
-  </nav>
-
-  <main class="doc">
-
-    <!-- ============ 1 ============ -->
-    <section class="chapter" id="about">
-      <div class="chapter-no">CHAPTER 1</div>
-      <h2>このアプリについて</h2>
-      <p class="lead">CurtainCall は、撮影済みのカードをMac／PCに取り込み、そのまま編集ソフトのビンに並べるところまでを自動化するアプリです。挙式当日の撮って出しエンドロールのように、秒単位で編集に入りたい現場のために作りました。</p>
-
-      <h3>やってくれること</h3>
-      <ul>
-        <li>カードを挿すと自動で検出し、案件フォルダの中に取り込みフォルダを作ってコピー</li>
-        <li>コピーした1本ずつをチェックサムで検証し、終わったら音とともに<span class="state safe">⏏ 抜いてOK</span>を表示（Mac・Windowsとも自動でアンマウントします）</li>
-        <li>同じカードを挿し直しても、前回から増えたぶんだけをコピー（都度フォーマットしない運用ができます）</li>
-        <li>ボタン1つで DaVinci Resolve / Premiere Pro のビンへ取り込み、続けてタイムラインまで自動生成</li>
-        <li>カメラの個体を自動で見分けて、Acam・Bcam のように振り分け</li>
-      </ul>
-
-      <h3>動作環境</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>項目</th><th>要件</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="nowrap"><b>Mac</b></td>
-              <td>Apple Silicon（M1以降）専用。Intel Macでは動きません。<br />〔Appleメニュー →「このMacについて」で「Apple M1」等と表示されていればApple Siliconです〕</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>Windows</b></td>
-              <td>Windows 10 / 11（64bit）。WebView2ランタイムが必要ですが、Windows 11 には最初から入っています。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>カメラ</b></td>
-              <td>SONY（XAVC・a7SIII / a7IV 等）、Panasonic（LUMIX）、Canon（EOS）。<br />SDカード・CFexpress のどちらでも、カードリーダーの機種を問わず扱えます。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>DaVinci Resolve</b></td>
-              <td><b>Studio版のみ</b>。無償版はスクリプト連携に対応していないため使えません。Python等の追加インストールは不要です。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>Premiere Pro</b></td>
-              <td>2020（14.0）以降。連携パネルのインストールが必要です（アプリ内のボタン1つ）。</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="callout">
-        <span class="callout-label">β版について</span>
-        <p>現在はβ版のため、ライセンスキーがなくても全機能が使えます。設定タブのライセンス欄は、正式版に向けた準備として置いてあるものです。</p>
-      </div>
-    </section>
-
-    <!-- ============ 2 ============ -->
-    <section class="chapter" id="install">
-      <div class="chapter-no">CHAPTER 2</div>
-      <h2>インストール</h2>
-
-      <h3>Mac</h3>
-      <ol class="steps">
-        <li>
-          <div class="step-title"><code>CurtainCall_0.1.3_arm64.dmg</code> をダブルクリック</div>
-        </li>
-        <li>
-          <div class="step-title">開いたウィンドウで CurtainCall を Applications フォルダへドラッグ</div>
-        </li>
-        <li>
-          <div class="step-title">アプリケーションフォルダからダブルクリックで起動</div>
-          <p class="note">Appleの公証を取得済みなので、警告なしでそのまま開きます。ターミナルでの解除作業は要りません。</p>
-        </li>
-      </ol>
-      <div class="callout">
-        <span class="callout-label">0.1.1 以前をお使いだった方へ</span>
-        <p>「壊れているため開けません」と出て <code>xattr</code> の入力が必要だった問題は 0.1.2 で解消しました。古いバージョンはアプリケーションフォルダから削除して置き換えてください。案件・カメラの登録内容はそのまま引き継がれます。</p>
-      </div>
-
-      <h3>Windows（補足）</h3>
-      <p>配布zipには「インストーラ版」と「ポータブル版」が入っています。どちらか一方で構いません。</p>
-      <ul>
-        <li><b>インストーラ版</b>：<code>CurtainCall_x64-setup.exe</code> を実行。SmartScreenの警告が出たら「詳細情報」→「実行」を選んでください（コード署名がまだ無いための表示です）。</li>
-        <li><b>ポータブル版</b>：<code>CurtainCall.exe</code> をそのまま実行。インストール不要です。</li>
-        <li>起動しない場合は同梱の <code>MicrosoftEdgeWebview2Setup.exe</code> を先に実行してください（Windows 10 向けの保険。インストール時にネット接続が必要です）。</li>
-      </ul>
-      <div class="callout warn">
-        <span class="callout-label">Windows 版の仕様差</span>
-        <p>ウィンドウを閉じてもアプリは終了せず、常駐します。閉じたあとにもう一度起動すると、同じウィンドウが戻ってきます。完全に終了したいときはタスクマネージャーから終了してください（終了ボタンは今後追加予定です）。</p>
-      </div>
-    </section>
-
-    <!-- ============ 3 ============ -->
-    <section class="chapter" id="firstrun">
-      <div class="chapter-no">CHAPTER 3</div>
-      <h2>最初の1回だけの設定</h2>
-      <p class="lead">現場に入る前に、落ち着いた場所で済ませておくのが安全です。所要5分ほど。</p>
-
-      <h3>1. 使う編集ソフトを選ぶ</h3>
-      <p>「設定」タブの<b>使用する編集ソフト</b>で DaVinci Resolve か Premiere Pro を選びます。メイン画面の取り込みボタンのラベルが、選んだソフトの名前に変わります。</p>
-
-      <h4>DaVinci Resolve を使う場合</h4>
-      <p>Resolve 側で外部からの操作を許可しておく必要があります。<b>既定では無効</b>なので、必ず確認してください。</p>
-      <ol class="steps">
-        <li>
-          <div class="step-title">Resolve の 環境設定 → システム → 一般 を開く</div>
-        </li>
-        <li>
-          <div class="step-title">「外部スクリプティングの使用」を<b>ローカル</b>にする</div>
-        </li>
-        <li>
-          <div class="step-title">Resolve を再起動する</div>
-          <p class="note">設定を変えただけでは反映されません。再起動して初めて繋がります。「繋がらない」ときは、まずここを疑ってください。</p>
-        </li>
-      </ol>
-
-      <h4>Premiere Pro を使う場合</h4>
-      <ol class="steps">
-        <li>
-          <div class="step-title">設定タブで「Premiere Pro」を選ぶ</div>
-        </li>
-        <li>
-          <div class="step-title">同じ画面の「連携パネルをインストール」ボタンを押す</div>
-          <p class="note">ファイルのコピーだけなので一瞬で終わります。「インストールしました」と出れば完了です。</p>
-        </li>
-        <li>
-          <div class="step-title">Premiere Pro を一度終了して、起動し直す</div>
-          <p class="note">パネルは Premiere の起動時にしか読み込まれません。起動しっぱなしでは現れません。</p>
-        </li>
-        <li>
-          <div class="step-title">メニューの ウィンドウ → エクステンション → CurtainCall を開く</div>
-          <p class="note">小さな黒いパネルに「監視中…」と出たら準備完了。編集中はこのパネルを開いたままにしてください（どこかにドッキングしておけば邪魔になりません）。一度開けば次回からは自動で開きます。</p>
-        </li>
-      </ol>
-      <div class="callout warn">
-        <span class="callout-label">アプリを新しくした日は</span>
-        <p>CurtainCall を起動すると連携パネルも自動で最新版に入れ替わります。ただし Premiere は起動時にしかパネルを読まないので、<b>アプリを更新した日は Premiere を一度終了して起動し直してください</b>。古いパネルのままだと、タイムライン作成だけが効かないといった中途半端な状態になります。</p>
-      </div>
-
-      <h3>2. 案件を作る</h3>
-      <ol class="steps">
-        <li>
-          <div class="step-title">「案件」タブを開く</div>
-        </li>
-        <li>
-          <div class="step-title">案件名と保存先フォルダを指定して「作成して開く」</div>
-          <p class="note">案件名は <code>2026-07-14_山田様</code> のように日付＋新郎新婦名にしておくと後から探しやすくなります。保存先はカード自身を指定できない作りになっています。</p>
-        </li>
-      </ol>
-      <p>2件目からは<b>「前回の設定で新規作成」</b>が使えます。前回と同じ保存先の親フォルダを引き継いだ状態で作成できるので、現場では案件名を入れるだけで済みます。過去の案件は「最近の案件」から開き直せます。</p>
-
-      <h3>3. カメラを登録する</h3>
-      <p>初めてのカメラのカードを挿すと「新しいカメラを検出しました」と出ます。ラベル（例：<code>Acam</code>／<code>手持ち</code>／<code>ジンバル</code>）と色を決めて「登録して取り込み開始」を押せば、そのまま取り込みが始まります。</p>
-      <figure class="shot">
-        <div class="shot-frame">
-          <div class="sh-modalwrap">
-            <div class="sh-modal">
-              <h4>新しいカメラを検出しました</h4>
-              <div class="sh-sub">ILCE-7SM3 ／ 747A90FFFE28518E</div>
-              <div>
-                <div class="sh-h" style="margin-bottom:5px">ラベル</div>
-                <div class="sh-field">Bcam</div>
-              </div>
-              <div>
-                <div class="sh-h" style="margin-bottom:6px">色</div>
-                <div class="sh-swatches">
-                  <span class="sh-sw" style="background:#ef4444"></span>
-                  <span class="sh-sw sel" style="background:#f59e0b"></span>
-                  <span class="sh-sw" style="background:#22c55e"></span>
-                  <span class="sh-sw" style="background:#4f8ff7"></span>
-                  <span class="sh-sw" style="background:#a855f7"></span>
-                </div>
-              </div>
-              <div class="sh-btn" style="margin-left:0;justify-content:center">登録して取り込み開始</div>
-            </div>
-          </div>
-        </div>
-        <figcaption class="shot-cap">初めてのカメラを挿したときに出る登録画面。ここで付けた色とラベルが、以降ずっとそのカメラの目印になります。</figcaption>
-      </figure>
-      <p>カメラは<b>本体のシリアル番号で個体を識別</b>しているので、同じ機種を2台使っていても混ざりません。カードを入れ替えても、登録は一度きりです。ラベルや色は「カメラ管理」タブでいつでも変えられます。</p>
-      <div class="callout">
-        <span class="callout-label">本番前におすすめ</span>
-        <p>使うカメラ全台で数秒ずつテスト撮影し、事前に登録を済ませておくと、当日はカードを挿すだけになります。</p>
-      </div>
-    </section>
-
-    <!-- ============ 4 ============ -->
-    <section class="chapter" id="day">
-      <div class="chapter-no">CHAPTER 4</div>
-      <h2>当日の流れ</h2>
-      <p class="lead">やることは「挿す」と「ボタンを押す」の2つだけです。</p>
-
-      <ol class="steps">
-        <li>
-          <div class="step-title">カードを挿す</div>
-          <p>自動で検出され、カメラ別のフォルダが作られてコピーが始まります。挿しっぱなしで放置して構いません。</p>
-        </li>
-        <li>
-          <div class="step-title">進捗を横目で見る</div>
-          <p>画面右下に小窓（オーバーレイ）が出ます。編集ソフトを全画面にしていても最前面に残るので、編集を続けながら状況が分かります。表示は <span class="state copy">コピー中</span> → <span class="state verify">検証中</span> → <span class="state safe">⏏ 抜いてOK</span> と進みます。</p>
-        </li>
-        <li>
-          <div class="step-title">音が鳴ったらカードを抜く</div>
-          <p>完了音と<span class="state safe">⏏ 抜いてOK</span>は「コピーと検証がすべて終わった」合図です。カードは自動でアンマウントされているので、そのまま抜けます。</p>
-          <p class="note">小窓は編集ソフトなど別の場所をクリックしても残ります。「DaVinci Resolveへ取り込み」を押して取り込みが終わると自動で閉じます。それ以外で消したいときは右上の × を押してください。</p>
-        </li>
-        <li>
-          <div class="step-title">「DaVinci Resolveへ取り込み」ボタンを押す</div>
-          <p>まだ編集ソフトに入れていない素材が、設定どおりのビン分けでまとめて取り込まれます。ボタンの数字バッジは、未取り込みのフォルダ数です。</p>
-          <p class="note">タイムライン自動生成をONにしていれば、ビンに入れたあと続けてタイムラインまで作られます。</p>
-        </li>
-        <li>
-          <div class="step-title">次のカードを挿す</div>
-          <p>以降は 1〜4 の繰り返しです。同じカードを挿し直した場合は、前回から増えたぶんだけがコピーされ、新しいフォルダに入ります。</p>
-        </li>
-      </ol>
-
-      <figure class="shot overlay">
-        <div class="shot-frame">
-          <div class="sh-ov">
-            <div>
-              <div class="sh-cam"><span class="sh-cdot" style="background:#ef4444"></span>Acam<span class="sh-state ok">⏏ 抜いてOK</span></div>
-              <div class="sh-bar"><div class="sh-fill ok" style="width:100%"></div></div>
-            </div>
-            <div>
-              <div class="sh-cam"><span class="sh-cdot" style="background:#f59e0b"></span>Bcam<span class="sh-state">コピー中</span></div>
-              <div class="sh-bar"><div class="sh-fill" style="width:62%"></div></div>
-              <div class="sh-meta"><span>7.8 / 12.4 GB ・ 62%</span><span>残り 0:41</span></div>
-            </div>
-            <div class="sh-ovbtn">DaVinci Resolveへ取り込み<span class="sh-badge" style="margin-left:5px">2</span></div>
-            <div class="sh-ovhint">クリックでメイン画面を開く</div>
-          </div>
-        </div>
-        <figcaption class="shot-cap">画面右下に出る進捗の小窓。編集ソフトを全画面にしていても最前面に残ります。</figcaption>
-      </figure>
-
-      <div class="callout safe">
-        <span class="callout-label">カードをフォーマットしない運用ができます</span>
-        <p>差分コピーがあるので、現場でカードを空にする必要はありません。カードを予備の保管先として残したまま、増えたぶんだけを取り込んでいけます。フォーマットは撤収後、ご自身のカメラで行ってください。</p>
-      </div>
-
-      <div class="callout warn">
-        <span class="callout-label">取り込みを止めておきたいとき</span>
-        <p>画面右上の<b>有効／無効</b>トグルを「無効」にすると、カードを挿しても取り込みが始まりません。整理のためにカードを挿す、別案件のカードを一時的に読ませたくない、といった場面で使ってください。無効の間は画面上部に帯が出ます（戻し忘れ防止）。</p>
-      </div>
-    </section>
-
-    <!-- ============ 5 ============ -->
-    <section class="chapter" id="screen">
-      <div class="chapter-no">CHAPTER 5</div>
-      <h2>画面の見かた</h2>
-      <p class="lead">本書の画面図は、アプリのUIをそのまま組み直した再現図です（サンプルの案件名・カメラ名で表示しています）。</p>
-
-      <figure class="shot">
-        <div class="shot-frame">
-          <div class="sh-titlebar">
-            <span class="sh-light"></span><span class="sh-light"></span><span class="sh-light"></span>
-            <span class="sh-title">CurtainCall</span>
-          </div>
-          <div class="sh-topbar">
-            <span class="sh-brand">CurtainCall</span>
-            <span class="sh-tabs">
-              <span class="sh-tab on">メイン</span>
-              <span class="sh-tab">案件</span>
-              <span class="sh-tab">カメラ管理</span>
-              <span class="sh-tab">設定</span>
-            </span>
-            <span class="sh-power"><span class="sh-pdot"></span>有効</span>
-          </div>
-          <div class="sh-body">
-            <div class="sh-head">
-              <span class="sh-proj">2026-07-14_山田様</span>
-              <span class="sh-btn">DaVinci Resolveへ取り込み<span class="sh-badge">2</span></span>
-            </div>
-            <div>
-              <div class="sh-h">挿入中のカード</div>
-              <div class="sh-stack" style="margin-top:7px">
-                <div class="sh-card">
-                  <div class="sh-cam"><span class="sh-cdot" style="background:#f59e0b"></span>Bcam<span class="sh-state">コピー中</span></div>
-                  <div class="sh-bar"><div class="sh-fill" style="width:62%"></div></div>
-                  <div class="sh-meta"><span>7.8 / 12.4 GB ・ 62%</span><span>残り 0:41</span></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="sh-h">取り込み履歴</div>
-              <div class="sh-stack" style="margin-top:7px">
-                <div class="sh-item"><span class="sh-cdot" style="background:#ef4444"></span><b>Acam_3</b><span class="sh-tag">未取込</span><span class="sh-right">4 クリップ</span></div>
-                <div class="sh-item"><span class="sh-cdot" style="background:#f59e0b"></span><b>Bcam_2</b><span class="sh-tag">取込済</span><span class="sh-right">2 クリップ</span></div>
-                <div class="sh-item"><span class="sh-cdot" style="background:#ef4444"></span><b>Acam_2</b><span class="sh-tag">取込済</span><span class="sh-right">3 クリップ</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <figcaption class="shot-cap">メイン画面。当日はここだけ見ていれば足ります。取り込みボタンの数字は、まだ編集ソフトへ送っていないフォルダの数です。</figcaption>
-      </figure>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>タブ</th><th>できること</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="nowrap"><b>メイン</b></td>
-              <td>開いている案件名、取り込みボタン、挿入中のカードの進捗、取り込み履歴。当日はこの画面だけ見ていれば足ります。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>案件</b></td>
-              <td>案件の新規作成、最近の案件を開く。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>カメラ管理</b></td>
-              <td>登録済みカメラのラベル・色の変更。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>設定</b></td>
-              <td>ライセンス、使う編集ソフト、ビンの分け方、タイムライン、トラック割り当て。</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h3>進捗の小窓（オーバーレイ）</h3>
-      <p>カードを挿すと右下に現れる小窓です。カメラごとに色付きのドットとバーが並び、進捗は<b>今回コピーする新規ぶんの合計容量</b>に対する割合で出ます（0%から100%まで一続きに進みます）。小窓の中にも取り込みボタンがあるので、編集ソフトから離れずに送れます。</p>
-
-      <h3>取り込み履歴</h3>
-      <p>メイン画面の下に、取り込んだフォルダが新しい順に並びます。行をクリックすると選択状態になり、選んだフォルダを編集ソフトへ送り直せます（→ <a href="#reimport">第8章</a>）。</p>
-    </section>
-
-    <!-- ============ 6 ============ -->
-    <section class="chapter" id="settings">
-      <div class="chapter-no">CHAPTER 6</div>
-      <h2>設定リファレンス</h2>
-
-      <h3>取り込み方法（ビンの分け方）</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>設定</th><th>できるビン</th><th>向いている使い方</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="nowrap"><b>すべて1つのビンに<br />まとめる</b></td>
-              <td><code>Import_1</code>、<code>Import_2</code> …（押すたびに新規）</td>
-              <td>全カメラをTC順に並べて頭から拾っていく、いちばんシンプルな方式。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>フォルダごとに<br />ビンを分ける</b></td>
-              <td>取り込みフォルダと同名（<code>Acam_1</code>、<code>Bcam_1</code> …）</td>
-              <td>PC内のフォルダ構成をそのまま編集ソフトに写したいとき。同名ビンは再利用されるので増殖しません。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>カメラを<br />グループでまとめる</b></td>
-              <td><code>{グループ名}_1</code>（例：<code>Main_1</code> / <code>Sub_1</code>）</td>
-              <td>3カメ以上で「1・2カメは同じビン、3カメだけ別」にしたいとき。</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <figure class="shot">
-        <div class="shot-frame">
-          <div class="sh-body">
-            <div class="sh-h">取り込み方法</div>
-            <div class="sh-stack">
-              <div class="sh-opt"><span class="sh-radio"></span><span><b>すべて1つのビンにまとめる</b><span>全カメラの素材を1つの新規ビンに取り込みます。</span></span></div>
-              <div class="sh-opt"><span class="sh-radio"></span><span><b>取り込んだフォルダごとにビンを分ける</b><span>Acam_1 / Bcam_1 / Acam_2 …ごとに同名のビンを作ります。</span></span></div>
-              <div class="sh-opt on"><span class="sh-radio"></span><span><b>カメラをグループでまとめる</b><span>グループごとにビンを作って取り込みます。</span></span></div>
-            </div>
-            <div class="sh-stack">
-              <div class="sh-item"><span class="sh-cdot" style="background:#ef4444"></span><b>Acam</b><span class="sh-right">1 <b style="color:#fff;background:#4f8ff7;border-radius:5px;padding:1px 6px">2</b> 3</span></div>
-              <div class="sh-item"><span class="sh-cdot" style="background:#f59e0b"></span><b>Bcam</b><span class="sh-right">1 <b style="color:#fff;background:#4f8ff7;border-radius:5px;padding:1px 6px">2</b> 3</span></div>
-              <div class="sh-item"><span class="sh-cdot" style="background:#22c55e"></span><b>Ccam</b><span class="sh-right">1 2 <b style="color:#fff;background:#4f8ff7;border-radius:5px;padding:1px 6px">3</b></span></div>
-            </div>
-            <div class="sh-preview">できるビン： Main_1 ／ Sub_1</div>
-          </div>
-        </div>
-        <figcaption class="shot-cap">設定タブの「取り込み方法」。グループを選んだときだけカメラ一覧が開き、いちばん下に結果のプレビューが出ます。</figcaption>
-      </figure>
-
-      <p>「カメラをグループでまとめる」を選んだときだけ、カメラ一覧とグループ番号のボタンが開きます。グループ名を入れておくとビン名に使われ、未入力ならラベルを繋いだ名前（<code>Acam+Bcam_1</code>）になります。設定欄には「できるビン：Main_1 ／ Sub_1」というプレビューが常に出ているので、押す前に結果を確認できます。</p>
-      <div class="callout">
-        <span class="callout-label">新しく登録したカメラの扱い</span>
-        <p>新規カメラは空いているグループ番号（＝単独グループ）から始まります。既存のビンに黙って混ざる事故を防ぐためです。まとめたい場合は設定で番号を合わせてください。</p>
-      </div>
-
-      <h3>取り込み後のタイムライン</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>設定</th><th>内容</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="nowrap"><b>作らない</b></td>
-              <td>ビンに取り込むだけ。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>TC順に1本へ<br />並べる</b></td>
-              <td>全カメラの素材をタイムコード順に、1本のトラックへ隙間なく連結します。頭から見て使うカットを拾う作業向き。</td>
-            </tr>
-            <tr>
-              <td class="nowrap"><b>カメラごとに<br />トラックを分ける</b></td>
-              <td>Acam→V1、Bcam→V2 …のように分け、実時間の位置に配置します。<b>各カメラのTCが揃っている（jam sync 済み）ことが前提</b>です。</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p>並び順は素材の状態を見て、セット全体で1つの基準に決まります。全クリップにTCがあればTC、無ければ撮影日時、どちらも無ければファイル名の順です。婚礼が0時をまたいだ場合も正しく並ぶようになっています。</p>
-      <p>タイムライン名は<b>ベース名</b>で、実際は <code>{ベース名}_{番号}</code> になります。番号はビンと共通なので、<code>Import_3</code> と <code>CurtainCall_3</code> のように揃います。</p>
-      <div class="callout">
-        <span class="callout-label">タイムラインが作れなくても取り込みは成功します</span>
-        <p>タイムライン生成に失敗しても、素材の取り込み自体は完了扱いです。理由が警告として表示されるだけなので、素材が入っていない、ということは起きません。</p>
-      </div>
-
-      <h4>トラックの割り当て</h4>
-      <p>「カメラごとにトラックを分ける」を選ぶと、カメラごとに V1 / V2 / V3 … を指定できます。映像と音声は同じ番号のトラックに入ります（Acam → V1 / A1）。</p>
-      <ul>
-        <li>あるカメラで V1 を選ぶと、他のカメラは相対順序を保ったまま1つずつ後ろへ<b>移動</b>します（入れ替えではありません）。同じトラックに2台が乗って上書きし合う事故を、そもそも作れない設計にしています。</li>
-        <li>その回に使わなかったカメラのぶんは<b>詰められます</b>。Bcam だけ回した日は、Bcam が V1 に入ります。設定の番号は「並び順」として働きます。</li>
-      </ul>
-
-      <h3>ライセンス</h3>
-      <p>β期間中はキーの登録なしで全機能が使えます。キーを登録すると、設定画面の最上部に「— ◯◯様」と購入者名が常時表示されます。認証は<b>完全オフライン</b>で、ネット接続を一切必要としません。当日の会場でWi-Fiが不安定でも、起動できなくなることはありません。</p>
-    </section>
-
-    <!-- ============ 7 ============ -->
-    <section class="chapter" id="naming">
-      <div class="chapter-no">CHAPTER 7</div>
-      <h2>フォルダとビンの名前</h2>
-      <p class="lead">名前の付き方が分かっていると、あとで素材を探すときに迷いません。</p>
-
-      <h3>PC内のフォルダ</h3>
-      <p>案件の保存先フォルダの中に、<b>カード1枚＝1フォルダ</b>で作られます。名前は <code>{カメラのラベル}_{そのカメラの通し番号}</code> です。</p>
-      <ul>
-        <li>1回目の Acam のカード → <code>Acam_1</code></li>
-        <li>1回目の Bcam のカード → <code>Bcam_1</code></li>
-        <li>2回目の Acam のカード → <code>Acam_2</code></li>
-      </ul>
-      <p>番号はカメラごとに独立して増えるので、A・Bで進み方がずれても問題ありません。同じカードを挿し直したときは、増えたぶんだけが次の番号のフォルダに入ります。</p>
-
-      <h3>編集ソフトのビン</h3>
-      <p>設定した「取り込み方法」によって決まります（→ <a href="#settings">第6章</a>）。1つのビンにまとめる方式では、ボタンを押すたびに <code>Import_1</code>、<code>Import_2</code> …と新しいビンが作られます。プロジェクトパネルの一番上の階層を見てください。</p>
-    </section>
-
-    <!-- ============ 8 ============ -->
-    <section class="chapter" id="reimport">
-      <div class="chapter-no">CHAPTER 8</div>
-      <h2>撮り込み直し・再送</h2>
-      <p class="lead">ビンを作り直したい、うっかりプロジェクトを閉じてしまった、といったときのための機能です。</p>
-      <ol class="steps">
-        <li>
-          <div class="step-title">メイン画面の取り込み履歴で、送り直したいフォルダの行をクリック</div>
-          <p class="note">複数選べます。もう一度クリックすると選択が外れます。キーボードでも <kbd>Tab</kbd> で行を選び <kbd>Enter</kbd> または <kbd>Space</kbd> で選択できます。</p>
-        </li>
-        <li>
-          <div class="step-title">取り込みボタンのラベルが「選択した◯フォルダを…へ取り込み」に変わる</div>
-        </li>
-        <li>
-          <div class="step-title">そのまま押す</div>
-          <p class="note">取り込み済みかどうかに関係なく、選んだフォルダの全クリップが送られます。ビンの分け方・タイムラインは<b>現在の設定</b>に従います。</p>
-        </li>
-      </ol>
-      <p>未取り込みが0件のときも押せます（取り込み済みフォルダの送り直しは、まさにその状況で使うためです）。「フォルダごとにビンを分ける」設定なら同名ビンが再利用されるので、何度繰り返してもビンは増えません。</p>
-    </section>
-
-    <!-- ============ 9 ============ -->
-    <section class="chapter" id="safety">
-      <div class="chapter-no">CHAPTER 9</div>
-      <h2>データを守る仕組み</h2>
-      <p class="lead">撮り直しのきかない素材を扱うので、壊さないことを最優先に作っています。</p>
-
-      <h3>カードには一切書き込みません</h3>
-      <p>CurtainCall がカードに対して行うのは<b>読み取りだけ</b>です。書き込み・削除・フォーマットは行いません。取り込み先にカード自身を指定することもできない作りになっています。カードのフォーマットは、これまで通りご自身のカメラで行ってください。</p>
-
-      <h3>1本ずつ検証してから「抜いてOK」</h3>
-      <p>コピーしたファイルは1本ずつチェックサムで照合しています。<span class="state safe">⏏ 抜いてOK</span>は「コピーと検証の両方が終わった」合図です。この表示より前にカードを抜かないでください。</p>
-
-      <h3>途中で失敗しても、そこまでは残ります</h3>
-      <p>コピー中にエラーが起きても、<b>それまでに検証できたぶんは記録に残ります</b>。カードを挿し直せば、残りだけがコピーされます。50本中40本まで進んでいた場合、やり直しは10本ぶんです。</p>
-
-      <h3>容量が足りないときは、始める前に止まります</h3>
-      <p>コピー開始前に空き容量を確認し、足りなければ<b>1バイトもコピーせず</b>にお知らせします。ディスクを埋め切って編集ソフトごと不安定になる、という事態を避けるためです。</p>
-
-      <h3>自動で取り出すのはリムーバブルメディアだけ</h3>
-      <p>取り込み後の自動アンマウントは、リムーバブルと判定されたドライブに対してのみ行います。内蔵ディスクや外付けの作品アーカイブが誤って取り外されることはありません。</p>
-    </section>
-
-    <!-- ============ 10 ============ -->
-    <section class="chapter" id="limits">
-      <div class="chapter-no">CHAPTER 10</div>
-      <h2>できないこと</h2>
-      <p class="lead">仕様として現時点でできないことです。不具合ではありません。</p>
-      <ul>
-        <li><b>DaVinci Resolve の無償版では連携できません。</b>Studio版が必要です。取り込みと検証だけなら無償版の環境でも使えます。</li>
-        <li><b>Intel Mac では動きません。</b>Apple Silicon 専用です。</li>
-        <li><b>トラックの高さは自動で変えられません。</b>Resolve・Premiere とも、スクリプトからトラック高さを操作するAPIが用意されていないためです。タイムライン左上の表示オプションから手動で調整してください。</li>
-        <li><b>Premiere ではトラックを増やせません。</b>Premiere にはスクリプトからトラックを追加する手段が無いため、シーケンスのトラック本数が足りないぶんは配置できず、警告として報告します。あらかじめカメラ台数ぶんのトラックがあるシーケンスをお使いください。</li>
-        <li><b>AVCHD（旧Panasonic形式）は未対応です。</b>ファイル名がリセットされる形式のため、差分判定が成立しません。</li>
-        <li><b>撮影フォーマットの違うカメラを混ぜると、Premiere で不一致の警告が出ることがあります。</b>スクリプト側から抑止できません。</li>
-      </ul>
-    </section>
-
-    <!-- ============ 11 ============ -->
-    <section class="chapter" id="trouble">
-      <div class="chapter-no">CHAPTER 11</div>
-      <h2>困ったときは</h2>
-
-      <div class="qa">
-        <details>
-          <summary>Resolve に取り込めない／繋がらない</summary>
-          <div class="answer">
-            <p><strong>まず「外部スクリプティング」を確認してください。</strong>Resolve の 環境設定 → システム → 一般 →「外部スクリプティングの使用」を<b>ローカル</b>にして、<b>Resolve を再起動</b>します。既定では無効になっているうえ、設定を変えただけでは反映されません。ここでの詰まりがいちばん多いポイントです。</p>
-            <p>それでも繋がらない場合は、Resolve が <b>Studio版</b>かどうかを確認してください。無償版はスクリプト連携に対応していません。</p>
-          </div>
-        </details>
-        <details>
-          <summary>Premiere のメニューに CurtainCall が出てこない</summary>
-          <div class="answer">
-            <p><strong>Premiere を再起動しましたか。</strong>パネルは Premiere の起動時にしか読み込まれません。完全に終了（Mac は <kbd>⌘Q</kbd>）してから起動し直してください。</p>
-            <p>それでも出ない場合は、CurtainCall の設定画面で「連携パネルをインストール」をもう一度押してから、再び Premiere を再起動します。</p>
-          </div>
-        </details>
-        <details>
-          <summary>「連携パネルが起動していません」と出る</summary>
-          <div class="answer">
-            <p>Premiere 側で CurtainCall パネルが<b>開いているか</b>確認してください（ウィンドウ → エクステンション → CurtainCall）。パネルが閉じていると依頼を受け取れません。パネルに「監視中…」と出ていれば正常です。</p>
-          </div>
-        </details>
-        <details>
-          <summary>「Premiereでプロジェクトが開かれていません」と出る</summary>
-          <div class="answer">
-            <p>Premiere でプロジェクトを開いてから、もう一度取り込みボタンを押してください。</p>
-          </div>
-        </details>
-        <details>
-          <summary>取り込みは成功と出るのに、ビンが見当たらない</summary>
-          <div class="answer">
-            <p>プロジェクトパネルの<b>一番上の階層</b>を見てください。ビン名は <code>Import_1</code> か、取り込みフォルダと同じ名前（<code>Acam_1</code> など）です。Resolve では、直前に選択していたビンの中に入ることがあります。</p>
-          </div>
-        </details>
-        <details>
-          <summary>タイムラインはできたが、素材が並んでいない／音声が1本しか無い</summary>
-          <div class="answer">
-            <p>0.1.1 以降で解消済みの症状です。<b>アプリのバージョンを確認</b>してください。Premiere をお使いの場合は、アプリを更新した日に<b>Premiere を再起動</b>し忘れていないかもご確認ください。古いパネルが残っていると、タイムライン作成だけが効かないことがあります。</p>
-          </div>
-        </details>
-        <details>
-          <summary>カードを挿しても何も起きない</summary>
-          <div class="answer">
-            <p>次の順に確認してください。</p>
-            <p><b>1.</b> 画面右上のトグルが「無効」になっていませんか（無効中は画面上部に帯が出ます）。<br /><b>2.</b> 案件を開いていますか。メイン画面の上部に案件名が出ていない場合は、「案件」タブから作成または選択してください。<br /><b>3.</b> 対応カメラのカードですか（SONY / Panasonic / Canon）。<br /><b>4.</b> そのカードに新しい素材がありますか。前回から増えていなければ、コピーするものが無いため何も起きません。</p>
-          </div>
-        </details>
-        <details>
-          <summary>取り込み中に容量不足で止まった</summary>
-          <div class="answer">
-            <p>コピーは開始前に止まっているので、素材は無事です。保存先ディスクの空きを確保してから、カードを挿し直してください。すでに検証済みのぶんは飛ばして、残りだけがコピーされます。</p>
-          </div>
-        </details>
-        <details>
-          <summary>「抜いてOK」が出たのに、カードがまだマウントされている</summary>
-          <div class="answer">
-            <p>コピーと検証は完了しているので、データは取り込めています。カードリーダーの機種によっては自動の取り出しに対応していないことがあります。その場合は Finder（Windows はタスクトレイの「ハードウェアの安全な取り外し」）から手動で取り出してください。</p>
-          </div>
-        </details>
-        <details>
-          <summary>進捗の小窓が消えない</summary>
-          <div class="answer">
-            <p>小窓は勝手には消えない仕様です（見落とし防止のため）。別の場所をクリックしても消えません。取り込みボタンを押して取り込みが完了すると自動で閉じます。それ以外で閉じるときは右上の × を押してください。</p>
-          </div>
-        </details>
-        <details>
-          <summary>Windows：ウィンドウを閉じたらアプリが戻ってこない</summary>
-          <div class="answer">
-            <p>Windows 版はウィンドウを閉じても常駐します。<b>もう一度アプリを起動する</b>と、同じウィンドウが戻ってきます（二重に立ち上がることはありません）。完全に終了したいときはタスクマネージャーから終了してください。</p>
-          </div>
-        </details>
-      </div>
-    </section>
-
-    <!-- ============ 12 ============ -->
-    <section class="chapter" id="report">
-      <div class="chapter-no">CHAPTER 12</div>
-      <h2>不具合の報告</h2>
-      <p class="lead">β版です。おかしいと思ったことは、些細でも教えてください。次の情報があると原因にたどり着けます。</p>
-      <ul>
-        <li>使っていた<b>カメラの機種</b>とカードの種類</li>
-        <li><b>画面に出たメッセージ</b>（スクリーンショットがあると確実です）</li>
-        <li>Premiere の不具合なら、<b>パネル側の表示</b>も一緒に</li>
-        <li>何をした直後に起きたか（カードを挿した／取り込みボタンを押した、など）</li>
-      </ul>
-
-      <h3>とくに知りたいこと</h3>
-      <ul>
-        <li>取り込みの速さは実用的か</li>
-        <li>通知音と画面表示は、暗い会場で分かりやすいか</li>
-        <li>タイムライン自動作成は、編集の入り口として使えるか</li>
-        <li>迷った操作、意味が分からなかった表示</li>
-      </ul>
-      <p style="margin-top:22px">よろしくお願いします。</p>
-    </section>
-
-  </main>
-</div>
+<main class="choose">
+  <h2><span class="nobr">お使いのパソコンを</span><span class="nobr">選んでください</span></h2>
+  <ul class="choice-list">
+    <li class="choice">
+      <a class="btn btn-primary" href="manual-mac.html" aria-describedby="note-mac">Mac版</a>
+      <p class="choice-note" id="note-mac">Apple Silicon Mac（macOS 11 以降）</p>
+    </li>
+    <li class="choice">
+      <a class="btn" role="link" aria-disabled="true" aria-describedby="note-win">Windows版</a>
+      <p class="choice-note" id="note-win">Windows版は準備中です</p>
+    </li>
+  </ul>
+</main>
 
 <footer class="colophon">
   <span class="mark">CurtainCall</span>
-  <span>取扱説明書 — バージョン 0.1.3（β）</span>
+  <span>取扱説明書</span>
   <span><a href="tokushoho.html">特定商取引法に基づく表記</a>　<a href="terms.html">利用規約</a>　<a href="privacy.html">プライバシーポリシー</a></span>
   <span>Zmotions 岡崎 聡</span>
 </footer>
