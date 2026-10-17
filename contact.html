@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>お問い合わせ | CurtainCall</title>
+<meta name="description" content="CurtainCall の不具合のご報告、ライセンスキー、ご購入・返金に関するお問い合わせフォームです。" />
+<meta name="robots" content="index,follow" />
+<style>
+  :root {
+    --ground: #FAFAF7; --surface: #FFFFFF; --line: #E4E3DD; --line-soft: #EFEEE9;
+    --ink: #16161A; --ink-2: #5E5E57;
+    --accent: #1F3FD1; --accent-deep: #142C9A; --accent-soft: #E6EBFB;
+    --aurora-base: #F7F6F3;
+    --caution: #9A5B00; --caution-soft: #FBF0DC;
+    --error: #B3261E; --error-soft: #FCEBEA;
+    --field-line: #8F8E86;
+    --font: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  /* ライトテーマ1本に固定（LP・取扱説明書・各規約ページと同じ） */
+  :root, :root[data-theme="light"], :root[data-theme="dark"] { color-scheme: light; background: var(--ground); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { background: var(--ground); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.9; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: var(--accent); text-decoration-color: rgba(31,63,209,.35); text-underline-offset: 3px; }
+  a:hover { color: var(--accent-deep); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+  .cover { padding: 72px 24px 44px; text-align: center; background: var(--aurora-base); border-bottom: 1px solid var(--line); }
+  .cover-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .2em; color: var(--accent); }
+  .cover h1 { font-size: clamp(28px, 6vw, 44px); font-weight: 900; line-height: 1.3; margin-top: 12px; text-wrap: balance; }
+  .cover p { color: var(--ink-2); font-size: 14px; margin-top: 14px; }
+  .page { max-width: 760px; margin: 0 auto; padding: 48px 24px 72px; }
+  @media (max-width: 600px) { .page { padding: 36px 16px 56px; } .cover { padding: 56px 16px 36px; } }
+  .back { font-size: 13px; margin-bottom: 28px; display: inline-block; }
+  p, li { font-size: 15px; letter-spacing: .02em; overflow-wrap: anywhere; }
+  p + p { margin-top: 10px; }
+  .note { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 14px 16px; font-size: 14px; color: var(--ink-2); }
+  .note p { font-size: 14px; }
+
+  /* フォーム */
+  form { margin-top: 32px; }
+  .field { margin-top: 24px; }
+  .field:first-child { margin-top: 0; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 20px; }
+  @media (max-width: 600px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
+  label, .lbl { display: block; font-size: 15px; font-weight: 700; line-height: 1.6; margin-bottom: 6px; }
+  .req { display: inline-block; margin-left: 8px; padding: 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; line-height: 1.7; color: var(--accent); background: var(--accent-soft); border-radius: 3px; vertical-align: 1px; }
+  .hint { font-size: 13px; color: var(--ink-2); line-height: 1.7; margin-bottom: 8px; }
+  input[type="text"], input[type="email"], select, textarea {
+    display: block; width: 100%; min-height: 48px; padding: 10px 14px;
+    font: inherit; font-size: 16px; line-height: 1.6; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--field-line); border-radius: 4px;
+    transition: border-color 150ms linear, box-shadow 150ms linear;
+  }
+  textarea { min-height: 200px; resize: vertical; }
+  select {
+    -webkit-appearance: none; appearance: none; padding-right: 40px; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2316161A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  input:hover, select:hover, textarea:hover { border-color: var(--ink-2); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); border-radius: 4px; }
+  [aria-invalid="true"] { border-color: var(--error); box-shadow: inset 3px 0 0 var(--error); }
+  .counter { margin-top: 6px; font-size: 12px; color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+  .err { margin-top: 6px; font-size: 13px; font-weight: 700; line-height: 1.7; color: var(--error); }
+  .err:empty { margin: 0; }
+  .group { margin-top: 28px; padding: 20px 20px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+  .group-title { font-size: 15px; font-weight: 700; line-height: 1.6; }
+  .group-lead { font-size: 13px; color: var(--ink-2); margin-top: 2px; margin-bottom: 4px; }
+  @media (max-width: 600px) { .group { padding: 16px 14px 20px; } }
+
+  /* 添付 */
+  input[type="file"] { width: 100%; font: inherit; font-size: 14px; color: var(--ink-2); }
+  input[type="file"]::file-selector-button {
+    min-height: 44px; margin-right: 14px; padding: 0 18px; font: inherit; font-size: 14px; font-weight: 700; color: var(--accent);
+    background: var(--surface); border: 1px solid var(--accent); border-radius: 4px; cursor: pointer;
+    transition: background-color 150ms linear;
+  }
+  input[type="file"]::file-selector-button:hover { background: var(--accent-soft); }
+  .files { list-style: none; margin-top: 10px; padding: 0; border-top: 1px solid var(--line); }
+  .files li { display: flex; align-items: center; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .files .fname { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .files .fsize { flex: none; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .files button { flex: none; min-height: 44px; padding: 0 12px; font: inherit; font-size: 13px; font-weight: 700; color: var(--accent); background: transparent; border: 0; border-radius: 4px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .files button:hover { color: var(--accent-deep); background: var(--accent-soft); }
+
+  /* ハニーポット：画面外に置く（display:none にはしない） */
+  .hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+  /* 同意 */
+  .agree { display: flex; align-items: flex-start; gap: 12px; }
+  .agree input { flex: none; width: 24px; height: 24px; margin-top: 3px; accent-color: var(--accent); cursor: pointer; }
+  .agree label { display: block; margin: 0; font-weight: 500; cursor: pointer; }
+
+  /* 送信 */
+  .alert { margin-top: 24px; padding: 14px 16px; font-size: 14px; font-weight: 700; line-height: 1.8; color: var(--error); background: var(--error-soft); border: 1px solid var(--error); border-left-width: 3px; border-radius: 4px; }
+  .alert:empty { margin: 0; padding: 0; border: 0; }
+  .alert a { color: var(--error); }
+  .actions { margin-top: 28px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 56px; padding: 0 36px; font: inherit; font-size: 16px; font-weight: 700;
+    color: #FFFFFF; background: var(--accent); border: 0; border-radius: 4px; cursor: pointer;
+    transition: background-color 150ms linear, color 150ms linear;
+  }
+  .btn:hover { background: var(--accent-deep); }
+  .btn:disabled, .btn:disabled:hover { background: var(--line); color: var(--ink-2); box-shadow: inset 0 0 0 1px rgba(22, 22, 26, .12); cursor: not-allowed; }
+  @media (max-width: 600px) { .btn { width: 100%; } }
+  .done { margin-top: 32px; padding: 28px 24px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); }
+  .done:focus { outline: none; }
+  .done:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .done h2 { font-size: 19px; font-weight: 700; line-height: 1.5; }
+  .done p { margin-top: 10px; }
+  .noscript { margin-top: 24px; padding: 14px 16px; background: var(--caution-soft); color: var(--caution); font-size: 14px; font-weight: 700; }
+
+  .colophon { max-width: 760px; margin: 0 auto; padding: 28px 24px 56px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+  .colophon a { color: var(--ink-2); }
+  .colophon .mark { font-weight: 900; color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) { input, select, textarea, .btn, input[type="file"]::file-selector-button { transition: none; } }
+</style>
+</head>
+<body>
+<header class="cover">
+  <p class="cover-eyebrow">CONTACT</p>
+  <h1>お問い合わせ</h1>
+  <p>不具合のご報告・ライセンスキー・ご購入について</p>
+</header>
+<main class="page">
+  <a class="back" href="index.html">← CurtainCall トップへ</a>
+
+  <div class="note">
+    <p>ご返信は、3営業日以内（土日祝を除く）に <b>support@zmotions.net</b> からお送りします。メールが届かないときは、迷惑メールフォルダもご確認ください。</p>
+    <p>不具合のご報告は、お問い合わせの種類で「不具合の報告」を選び、お使いの環境の欄をわかる範囲で埋めていただくと、早く解決できます。</p>
+    <p>フォームが使えないときは、<a href="mailto:support@zmotions.net">support@zmotions.net</a> へ直接メールをお送りください。</p>
+  </div>
+
+  <noscript><p class="noscript">このフォームの送信にはJavaScriptが必要です。お手数ですが <a href="mailto:support@zmotions.net">support@zmotions.net</a> へ直接メールをお送りください。</p></noscript>
+
+  <form id="contact-form" novalidate>
+    <div class="field">
+      <label for="f-category">お問い合わせの種類<span class="req">必須</span></label>
+      <select id="f-category" name="category" required aria-describedby="e-category">
+        <option value="">選択してください</option>
+        <option value="bug">不具合の報告</option>
+        <option value="license">ライセンスキーについて</option>
+        <option value="purchase">購入・返金について</option>
+        <option value="other">その他</option>
+      </select>
+      <p class="err" id="e-category" aria-live="polite"></p>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label for="f-name">お名前<span class="req">必須</span></label>
+        <input type="text" id="f-name" name="name" maxlength="100" required autocomplete="name" aria-describedby="e-name" />
+        <p class="err" id="e-name" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="f-email">メールアドレス<span class="req">必須</span></label>
+        <input type="email" id="f-email" name="email" maxlength="254" required autocomplete="email" inputmode="email" aria-describedby="e-email" />
+        <p class="err" id="e-email" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div class="field" data-show="license purchase" hidden>
+      <label for="f-purchase_email">購入時のメールアドレス（上と違う場合）</label>
+      <p class="hint" id="h-purchase_email">ご購入のときに入力したメールアドレスが、上のものと違う場合だけご記入ください。</p>
+      <input type="email" id="f-purchase_email" name="purchase_email" maxlength="254" inputmode="email" autocomplete="off" aria-describedby="h-purchase_email e-purchase_email" disabled />
+      <p class="err" id="e-purchase_email" aria-live="polite"></p>
+    </div>
+
+    <div class="group" data-show="bug" role="group" aria-labelledby="g-env-title" hidden>
+      <p class="group-title" id="g-env-title">お使いの環境</p>
+      <p class="group-lead">すべて任意です。わかる範囲でご記入ください。</p>
+
+      <div class="row2">
+        <div class="field">
+          <label for="f-app_version">アプリの版</label>
+          <p class="hint" id="h-app_version">例: 1.0.0。アプリケーションフォルダの CurtainCall を選んで ⌘I（情報を見る）で確認できます。</p>
+          <input type="text" id="f-app_version" name="app_version" maxlength="50" autocomplete="off" aria-describedby="h-app_version e-app_version" disabled />
+          <p class="err" id="e-app_version" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="f-macos_version">macOSの版</label>
+          <p class="hint" id="h-macos_version">例: 15.1</p>
+          <input type="text" id="f-macos_version" name="macos_version" maxlength="50" autocomplete="off" aria-describedby="h-macos_version e-macos_version" disabled />
+          <p class="err" id="e-macos_version" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-mac_model">Macの機種</label>
+        <p class="hint" id="h-mac_model">例: MacBook Pro 14インチ M3</p>
+        <input type="text" id="f-mac_model" name="mac_model" maxlength="100" autocomplete="off" aria-describedby="h-mac_model e-mac_model" disabled />
+        <p class="err" id="e-mac_model" aria-live="polite"></p>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="f-editor">お使いの編集ソフト</label>
+          <select id="f-editor" name="editor" aria-describedby="e-editor" disabled>
+            <option value="">選択してください</option>
+            <option value="resolve">DaVinci Resolve Studio</option>
+            <option value="premiere">Premiere Pro</option>
+            <option value="both">両方</option>
+            <option value="none">使っていない</option>
+          </select>
+          <p class="err" id="e-editor" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="f-editor_version">編集ソフトの版</label>
+          <p class="hint" id="h-editor_version">例: 19.1</p>
+          <input type="text" id="f-editor_version" name="editor_version" maxlength="50" autocomplete="off" aria-describedby="h-editor_version e-editor_version" disabled />
+          <p class="err" id="e-editor_version" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-camera_card">カメラとカード</label>
+        <p class="hint" id="h-camera_card">例: LUMIX S5 / SDXC 128GB</p>
+        <input type="text" id="f-camera_card" name="camera_card" maxlength="300" autocomplete="off" aria-describedby="h-camera_card e-camera_card" disabled />
+        <p class="err" id="e-camera_card" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="f-message"><span id="msg-label">お問い合わせ内容</span><span class="req">必須</span></label>
+      <p class="hint" id="h-message" hidden>どの操作で、何が起きたか。画面に出たメッセージはそのまま書き写してください。</p>
+      <textarea id="f-message" name="message" maxlength="5000" required aria-describedby="h-message c-message e-message"></textarea>
+      <p class="counter" id="c-message">0 / 5000</p>
+      <p class="err" id="e-message" aria-live="polite"></p>
+    </div>
+
+    <div class="field">
+      <label for="f-screenshots">スクリーンショット</label>
+      <p class="hint" id="h-screenshots">3枚まで・1枚5MBまで・合計10MBまで（PNG / JPEG / WebP / HEIC / GIF）。不具合のときは、エラーが出た画面があると助かります。</p>
+      <input type="file" id="f-screenshots" name="screenshots" multiple accept="image/png,image/jpeg,image/webp,image/heic,image/heif,image/gif,.heic,.heif" aria-describedby="h-screenshots e-screenshots" />
+      <ul class="files" id="file-list" aria-label="添付するファイル" hidden></ul>
+      <p class="err" id="e-screenshots" aria-live="polite"></p>
+    </div>
+
+    <div class="hp" aria-hidden="true">
+      <label for="f-website">（空欄のままにしてください）</label>
+      <input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    </div>
+
+    <div class="field">
+      <div class="agree">
+        <input type="checkbox" id="f-privacy_agree" name="privacy_agree" value="1" required aria-describedby="e-privacy_agree" />
+        <label for="f-privacy_agree"><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する<span class="req">必須</span></label>
+      </div>
+      <p class="err" id="e-privacy_agree" aria-live="polite"></p>
+    </div>
+
+    <div class="alert" id="status" role="alert"></div>
+
+    <div class="actions">
+      <button type="submit" class="btn" id="submit-btn">送信する</button>
+    </div>
+  </form>
+
+  <div class="done" id="done" tabindex="-1" hidden>
+    <h2>送信しました</h2>
+    <p>3営業日以内（土日祝除く）に support@zmotions.net からご返信します。</p>
+    <p>メールが届かないときは、迷惑メールフォルダもご確認ください。</p>
+    <p style="margin-top:18px"><a href="index.html">← CurtainCall トップへ</a></p>
+  </div>
+</main>
+<footer class="colophon">
+  <span class="mark">CurtainCall</span>
+  <span><a href="tokushoho.html">特定商取引法に基づく表記</a>　<a href="terms.html">利用規約</a>　<a href="privacy.html">プライバシーポリシー</a></span>
+  <span>Zmotions 岡崎 聡</span>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var form = document.getElementById("contact-form");
+  var statusBox = document.getElementById("status");
+  var submitBtn = document.getElementById("submit-btn");
+  var doneBox = document.getElementById("done");
+  var fileInput = document.getElementById("f-screenshots");
+  var fileList = document.getElementById("file-list");
+  var msgArea = document.getElementById("f-message");
+  var counter = document.getElementById("c-message");
+  var msgLabel = document.getElementById("msg-label");
+  var msgHint = document.getElementById("h-message");
+
+  var HOST = location.hostname;
+  var ENDPOINT = (HOST === "localhost" || HOST === "127.0.0.1")
+    ? "http://localhost:8787/contact"
+    : "https://buy.zmotions.net/contact";
+
+  var MAX_FILES = 3;
+  var MAX_EACH = 5 * 1024 * 1024;
+  var MAX_TOTAL = 10 * 1024 * 1024;
+  var TYPES = ["image/png", "image/jpeg", "image/webp", "image/heic", "image/heif", "image/gif"];
+  var EXT = /\.(png|jpe?g|webp|heic|heif|gif)$/i;
+  var CATEGORIES = ["bug", "license", "purchase", "other"];
+  var EDITORS = ["", "resolve", "premiere", "both", "none"];
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // 画面に出す順（検証・フォーカス移動の順番）
+  var ORDER = ["category", "name", "email", "purchase_email", "app_version", "macos_version", "mac_model",
+    "editor", "editor_version", "camera_card", "message", "screenshots", "privacy_agree"];
+  var LABEL = {
+    category: "お問い合わせの種類", name: "お名前", email: "メールアドレス", purchase_email: "購入時のメールアドレス",
+    app_version: "アプリの版", macos_version: "macOSの版", mac_model: "Macの機種", editor: "お使いの編集ソフト",
+    editor_version: "編集ソフトの版", camera_card: "カメラとカード", message: "お問い合わせ内容",
+    screenshots: "スクリーンショット", privacy_agree: "プライバシーポリシーへの同意"
+  };
+  var MAXLEN = { name: 100, email: 254, purchase_email: 254, app_version: 50, macos_version: 50,
+    mac_model: 100, editor_version: 50, camera_card: 300, message: 5000 };
+
+  var files = [];
+  var sending = false;
+  var canDT = (function () { try { new DataTransfer(); return true; } catch (e) { return false; } })();
+
+  function field(name) { return form.querySelector('[name="' + name + '"]'); }
+  function errBox(name) { return document.getElementById("e-" + name); }
+  function isActive(el) { return el && !el.disabled; }
+
+  function setErr(name, msg) {
+    var box = errBox(name), el = field(name);
+    if (box) box.textContent = msg || "";
+    if (el) {
+      if (msg) el.setAttribute("aria-invalid", "true");
+      else el.removeAttribute("aria-invalid");
+    }
+  }
+  function clearAllErr() { ORDER.forEach(function (n) { setErr(n, ""); }); statusBox.innerHTML = ""; }
+  function setStatus(html) { statusBox.innerHTML = html; }
+
+  // ---- 種類による出し分け ----
+  function updateCategory() {
+    var cat = field("category").value;
+    Array.prototype.forEach.call(form.querySelectorAll("[data-show]"), function (box) {
+      var on = box.getAttribute("data-show").split(" ").indexOf(cat) >= 0;
+      box.hidden = !on;
+      Array.prototype.forEach.call(box.querySelectorAll("input, select, textarea"), function (c) {
+        c.disabled = !on;
+        if (!on) setErr(c.name, "");
+      });
+    });
+    if (cat === "bug") {
+      msgLabel.textContent = "起きたこと";
+      msgHint.hidden = false;
+    } else {
+      msgLabel.textContent = "お問い合わせ内容";
+      msgHint.hidden = true;
+    }
+  }
+  field("category").addEventListener("change", updateCategory);
+
+  var qType = new URLSearchParams(location.search).get("type");
+  if (qType && CATEGORIES.indexOf(qType) >= 0) field("category").value = qType;
+  updateCategory();
+
+  // ---- 文字数カウンタ ----
+  function updateCount() { counter.textContent = msgArea.value.length + " / 5000"; }
+  msgArea.addEventListener("input", updateCount);
+  updateCount();
+
+  // 入力し直したら、その欄のエラーを消す
+  form.addEventListener("input", function (ev) { if (ev.target && ev.target.name) setErr(ev.target.name, ""); });
+  form.addEventListener("change", function (ev) { if (ev.target && ev.target.name && ev.target.name !== "screenshots") setErr(ev.target.name, ""); });
+
+  // ---- 添付ファイル ----
+  function fmt(n) {
+    if (n < 1024 * 1024) return Math.max(1, Math.round(n / 1024)) + " KB";
+    return (n / 1024 / 1024).toFixed(1) + " MB";
+  }
+  function okType(f) {
+    return TYPES.indexOf(f.type) >= 0 || ((!f.type || f.type === "application/octet-stream") && EXT.test(f.name));
+  }
+  function totalSize() { return files.reduce(function (s, f) { return s + f.size; }, 0); }
+
+  function render() {
+    fileList.textContent = "";
+    files.forEach(function (f, i) {
+      var li = document.createElement("li");
+      var nm = document.createElement("span"); nm.className = "fname"; nm.textContent = f.name; nm.title = f.name;
+      var sz = document.createElement("span"); sz.className = "fsize"; sz.textContent = fmt(f.size);
+      li.appendChild(nm); li.appendChild(sz);
+      if (canDT) {
+        var b = document.createElement("button");
+        b.type = "button"; b.textContent = "外す";
+        b.setAttribute("aria-label", f.name + " を外す");
+        b.addEventListener("click", function () {
+          files.splice(i, 1); syncInput(); setErr("screenshots", "");
+          fileInput.focus();
+        });
+        li.appendChild(b);
+      }
+      fileList.appendChild(li);
+    });
+    fileList.hidden = files.length === 0;
+  }
+  function syncInput() {
+    if (canDT) {
+      var dt = new DataTransfer();
+      files.forEach(function (f) { dt.items.add(f); });
+      fileInput.files = dt.files;
+    }
+    render();
+  }
+
+  fileInput.addEventListener("change", function () {
+    var picked = Array.prototype.slice.call(fileInput.files);
+    var problems = [];
+    if (!canDT) files = [];   // 古いブラウザは追加選択ができないので選び直し
+    picked.forEach(function (f) {
+      var dup = files.some(function (x) { return x.name === f.name && x.size === f.size && x.lastModified === f.lastModified; });
+      if (dup) return;
+      if (!okType(f)) problems.push("「" + f.name + "」は対応していない形式です（PNG / JPEG / WebP / HEIC / GIF のみ）。");
+      else if (f.size > MAX_EACH) problems.push("「" + f.name + "」は1枚5MBを超えています（" + fmt(f.size) + "）。");
+      else if (files.length >= MAX_FILES) problems.push("「" + f.name + "」は追加できません。添付は3枚までです。");
+      else if (totalSize() + f.size > MAX_TOTAL) problems.push("「" + f.name + "」を加えると合計10MBを超えます。");
+      else files.push(f);
+    });
+    if (!canDT && problems.length) { files = []; fileInput.value = ""; }
+    syncInput();
+    setErr("screenshots", problems.join(" "));
+  });
+
+  // ---- 検証 ----
+  function check(name) {
+    var el = field(name);
+    if (!isActive(el)) return "";
+    var v = el.value.trim();
+    switch (name) {
+      case "category":
+        return CATEGORIES.indexOf(el.value) < 0 ? "お問い合わせの種類を選んでください。" : "";
+      case "name":
+        if (!v) return "お名前を入力してください。";
+        return v.length > 100 ? "お名前は100文字以内で入力してください。" : "";
+      case "email":
+        if (!v) return "メールアドレスを入力してください。";
+        if (v.length > 254) return "メールアドレスは254文字以内で入力してください。";
+        return EMAIL_RE.test(v) ? "" : "メールアドレスの形式が正しくありません。";
+      case "purchase_email":
+        if (!v) return "";
+        if (v.length > 254) return "メールアドレスは254文字以内で入力してください。";
+        return EMAIL_RE.test(v) ? "" : "メールアドレスの形式が正しくありません。";
+      case "editor":
+        return EDITORS.indexOf(el.value) < 0 ? "選択肢から選んでください。" : "";
+      case "message":
+        if (!v) return (field("category").value === "bug" ? "起きたこと" : "お問い合わせ内容") + "を入力してください。";
+        return el.value.length > 5000 ? "5000文字以内で入力してください。" : "";
+      case "screenshots":
+        if (files.length > MAX_FILES) return "添付は3枚までです。";
+        for (var i = 0; i < files.length; i++) {
+          if (!okType(files[i])) return "「" + files[i].name + "」は対応していない形式です。";
+          if (files[i].size > MAX_EACH) return "「" + files[i].name + "」は1枚5MBを超えています。";
+        }
+        return totalSize() > MAX_TOTAL ? "添付の合計が10MBを超えています。" : "";
+      case "privacy_agree":
+        return el.checked ? "" : "プライバシーポリシーへの同意が必要です。";
+      default:
+        return MAXLEN[name] && el.value.length > MAXLEN[name] ? MAXLEN[name] + "文字以内で入力してください。" : "";
+    }
+  }
+  function validateAll() {
+    var bad = [];
+    ORDER.forEach(function (n) {
+      var m = check(n);
+      setErr(n, m);
+      if (m) bad.push(n);
+    });
+    return bad;
+  }
+  function focusField(name) {
+    var el = field(name);
+    if (el && !el.disabled) { el.focus(); }
+  }
+
+  // ---- 送信 ----
+  function setSending(on) {
+    sending = on;
+    submitBtn.disabled = on;
+    submitBtn.textContent = on ? "送信中…" : "送信する";
+    form.setAttribute("aria-busy", on ? "true" : "false");
+  }
+  function mailLink() { return '<a href="mailto:support@zmotions.net">support@zmotions.net</a>'; }
+  function failGeneral() {
+    setStatus("送信できませんでした。お手数ですが " + mailLink() + " へ直接メールでお送りください。");
+  }
+  function showDone() {
+    form.hidden = true;
+    doneBox.hidden = false;
+    doneBox.focus();
+    doneBox.scrollIntoView({ block: "start" });
+  }
+
+  function handle(res, data) {
+    if (res.ok && data && data.ok === true) { showDone(); return; }
+
+    if (res.status === 400 && data && data.error === "invalid") {
+      var first = null, shown = 0;
+      (Array.isArray(data.fields) ? data.fields : []).forEach(function (n) {
+        if (ORDER.indexOf(n) < 0) return;
+        var msg = n === "screenshots"
+          ? "添付画像をご確認ください（3枚まで・1枚5MBまで・合計10MBまで、対応形式のみ）。"
+          : n === "privacy_agree" ? "プライバシーポリシーへの同意が必要です。"
+          : "「" + (n === "message" ? msgLabel.textContent : LABEL[n]) + "」の入力内容をご確認ください。";
+        setErr(n, msg);
+        shown++;
+        if (!first || ORDER.indexOf(n) < ORDER.indexOf(first)) first = n;
+      });
+      setStatus("入力内容をご確認ください。");
+      if (first) focusField(first);
+      return;
+    }
+    if (res.status === 413 || (data && data.error === "too_large")) {
+      setErr("screenshots", "添付画像が大きすぎます。枚数を減らすか、画像のサイズを小さくして、もう一度お試しください（1枚5MBまで・合計10MBまで）。");
+      setStatus("添付画像が大きすぎて送信できませんでした。");
+      focusField("screenshots");
+      return;
+    }
+    if (res.status === 429 || (data && data.error === "rate_limited")) {
+      setStatus("短時間に送信が続いたため受け付けを止めています。1時間ほどおいてから再度お試しください。");
+      return;
+    }
+    failGeneral();
+  }
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (sending) return;
+    statusBox.innerHTML = "";
+    var bad = validateAll();
+    if (bad.length) {
+      setStatus("入力内容をご確認ください（" + bad.length + "件）。");
+      focusField(bad[0]);
+      return;
+    }
+    setSending(true);
+    var ctl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, 60000) : null;
+    var opts = { method: "POST", body: new FormData(form) };   // content-type は付けない（multipart境界はブラウザが付与）
+    if (ctl) opts.signal = ctl.signal;
+
+    fetch(ENDPOINT, opts)
+      .then(function (res) {
+        return res.json().then(
+          function (data) { return { res: res, data: data }; },
+          function () { return { res: res, data: null }; }
+        );
+      })
+      .then(function (r) { handle(r.res, r.data); })
+      .catch(function () { failGeneral(); })
+      .then(function () {
+        if (timer) clearTimeout(timer);
+        if (!form.hidden) setSending(false);
+      });
+  });
+})();
+</script>
+</body>
+</html>
