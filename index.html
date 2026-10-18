@@ -273,16 +273,13 @@
     ボタン下の大きな余白は価格行の下側に効かせる。
     価格行ぶん（上の余白22px＋1行の高さ約24px）を差し引き、ボタンから対応機種の行までの全体の高さは従来から変えない。
   */
-  .hero-price + .hero-note { margin-top: max(40px, calc(clamp(64px, 9vw, 140px) - 46px)); }
+  .hero-price + .hero-note,
+  .hero-manual-row + .hero-note { margin-top: max(40px, calc(clamp(64px, 9vw, 140px) - 46px)); }
 
-  /* 対応表記（左）と取説へのリンク（右）を1行に。狭い画面では折り返して縦に並ぶ */
   .hero-note {
     margin-top: clamp(64px, 9vw, 140px);
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px 24px;
     min-height: 64px;
     padding: 14px 0;
     border-top: 1px solid rgba(22, 22, 26, .12);
@@ -451,16 +448,21 @@
   }
   .manual-link a span { transition: transform 150ms ease-out; }
   .manual-link a:hover span { transform: translateX(4px); }
-  /* ヒーロー下の取説リンク（対応表記の行の右端） */
+  /* ヒーローの取説ボタン。購入ボタンの次に目立つよう、青い枠線のボタンを価格の行の下・中央に置く */
+  .hero-manual-row { margin-top: 28px; text-align: center; }
+  .btn-outline {
+    color: var(--accent);
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--accent);
+  }
+  .btn-outline:hover { color: var(--accent-deep); background: var(--accent-soft); }
   .hero-manual {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 700;
+    gap: 10px;
+    justify-content: center;
+    min-width: min(300px, calc(100vw - 32px));
+    min-height: 48px;
+    font-size: 15px;
     letter-spacing: .04em;
-    white-space: nowrap;
-    text-decoration: none;
   }
   .hero-manual span { transition: transform 150ms ease-out; }
   .hero-manual:hover span { transform: translateX(4px); }
@@ -504,7 +506,8 @@
       <a class="btn btn-primary buy-btn" data-buy href="https://buy.zmotions.net/buy" rel="nofollow">購入する</a>
     </div>
     <p class="hero-price"><span class="nobr" data-hp="main">早期価格 <b>3,980円</b>（税込）・<span data-hp="term">11月30日まで</span> ／</span> <span class="nobr" data-hp="after">以降 5,980円</span><a href="#price">価格と条件</a></p>
-    <div class="hero-note"><p>SONY α・Panasonic LUMIX・Canon EOS ／ macOS（Windows版は準備中） ／ DaVinci Resolve Studio・Premiere Pro</p><a class="hero-manual" href="manual.html">取扱説明書を見る<span aria-hidden="true">→</span></a></div>
+    <p class="hero-manual-row"><a class="btn btn-outline hero-manual" href="manual.html">取扱説明書を見る<span aria-hidden="true">→</span></a></p>
+    <p class="hero-note">SONY α・Panasonic LUMIX・Canon EOS ／ macOS（Windows版は準備中） ／ DaVinci Resolve Studio・Premiere Pro</p>
   </div>
 </header>
 
