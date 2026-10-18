@@ -275,10 +275,14 @@
   */
   .hero-price + .hero-note { margin-top: max(40px, calc(clamp(64px, 9vw, 140px) - 46px)); }
 
+  /* 対応表記（左）と取説へのリンク（右）を1行に。狭い画面では折り返して縦に並ぶ */
   .hero-note {
     margin-top: clamp(64px, 9vw, 140px);
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px 24px;
     min-height: 64px;
     padding: 14px 0;
     border-top: 1px solid rgba(22, 22, 26, .12);
@@ -434,6 +438,32 @@
     letter-spacing: .08em;
     color: var(--ink-2);
   }
+  /* 作者紹介の下の取説リンク。罫線1本の上に、矢印つきの文字リンクだけを置く */
+  .manual-link { padding-top: 24px; border-top: 1px solid var(--line); }
+  .manual-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-decoration: none;
+  }
+  .manual-link a span { transition: transform 150ms ease-out; }
+  .manual-link a:hover span { transform: translateX(4px); }
+  /* ヒーロー下の取説リンク（対応表記の行の右端） */
+  .hero-manual {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .hero-manual span { transition: transform 150ms ease-out; }
+  .hero-manual:hover span { transform: translateX(4px); }
 
   /* ---------- フッター（法的表記へのリンク） ---------- */
   .site-foot { border-top: 1px solid var(--line); padding: 28px 0 56px; font-size: 13px; color: var(--ink-2); }
@@ -446,6 +476,7 @@
     html { scroll-behavior: auto; }
     .aurora i { animation: none; }
     .btn { transition: none; }
+    .manual-link a span, .hero-manual span { transition: none; }
   }
 </style>
 </head>
@@ -473,7 +504,7 @@
       <a class="btn btn-primary buy-btn" data-buy href="https://buy.zmotions.net/buy" rel="nofollow">購入する</a>
     </div>
     <p class="hero-price"><span class="nobr" data-hp="main">早期価格 <b>3,980円</b>（税込）・<span data-hp="term">11月30日まで</span> ／</span> <span class="nobr" data-hp="after">以降 5,980円</span><a href="#price">価格と条件</a></p>
-    <p class="hero-note">SONY α・Panasonic LUMIX・Canon EOS ／ macOS（Windows版は準備中） ／ DaVinci Resolve Studio・Premiere Pro</p>
+    <div class="hero-note"><p>SONY α・Panasonic LUMIX・Canon EOS ／ macOS（Windows版は準備中） ／ DaVinci Resolve Studio・Premiere Pro</p><a class="hero-manual" href="manual.html">取扱説明書を見る<span aria-hidden="true">→</span></a></div>
   </div>
 </header>
 
@@ -542,9 +573,23 @@
 </section>
 
 <section>
+  <div class="wrap stack">
+    <div class="sec-head">
+      <div class="sec-label"><span class="sec-num">03</span><span class="kicker">ABOUT</span></div>
+      <h2>つくったのは、現場の人間です。</h2>
+    </div>
+    <div class="maker">
+      <p>CurtainCallは、いまも毎週末カメラを回している婚礼映像クリエイターが、お客様に最高の映像を届けるために作ったツールです。機能はすべて、実際の挙式で使いながら磨いています。
+      <span class="name">Zmotions 岡崎 聡</span></p>
+    </div>
+    <p class="manual-link"><a href="manual.html">取扱説明書を見る<span aria-hidden="true">→</span></a></p>
+  </div>
+</section>
+
+<section>
   <div class="wrap split">
     <div class="sec-head">
-      <div class="sec-label"><span class="sec-num">03</span><span class="kicker">REQUIREMENTS</span></div>
+      <div class="sec-label"><span class="sec-num">04</span><span class="kicker">REQUIREMENTS</span></div>
       <h2>動作環境</h2>
     </div>
     <!-- 表記はプロモーションリールの最後の画面（CAMERA / OS / EDITOR）に合わせる -->
@@ -561,7 +606,7 @@
 <section id="price">
   <div class="wrap split">
     <div class="sec-head">
-      <div class="sec-label"><span class="sec-num">04</span><span class="kicker">PRICE</span></div>
+      <div class="sec-label"><span class="sec-num">05</span><span class="kicker">PRICE</span></div>
       <h2>価格</h2>
     </div>
     <div class="price-body">
@@ -592,19 +637,6 @@
         <p class="buy-note" data-buy-note hidden></p>
       </div>
       <p class="price-legal">お支払い・お引き渡し・返品の条件は<a href="tokushoho.html">特定商取引法に基づく表記</a>と<a href="terms.html">利用規約</a>をご確認ください。</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap stack">
-    <div class="sec-head">
-      <div class="sec-label"><span class="sec-num">05</span><span class="kicker">ABOUT</span></div>
-      <h2>つくったのは、現場の人間です。</h2>
-    </div>
-    <div class="maker">
-      <p>CurtainCallは、いまも毎週末カメラを回している婚礼映像クリエイターが、お客様に最高の映像を届けるために作ったツールです。機能はすべて、実際の挙式で使いながら磨いています。
-      <span class="name">Zmotions 岡崎 聡</span></p>
     </div>
   </div>
 </section>
