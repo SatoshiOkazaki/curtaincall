@@ -42,7 +42,17 @@
   form { margin-top: 32px; }
   .field { margin-top: 24px; }
   .field:first-child { margin-top: 0; }
-  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 20px; }
+  /*
+    横並びの2項目。上の余白は行（.row2）が持ち、中の .field は余白を持たない。
+    （.field:first-child の「余白なし」が左の項目にだけ効いて、左右の高さがずれるのを防ぐ）
+    スマホで縦に積むときの間隔は row-gap で取る。
+  */
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 20px; margin-top: 24px; }
+  .row2:first-child { margin-top: 0; }
+  .row2 > .field { margin-top: 0; }
+  /* 左右で説明文の行数が違っても、入力欄の高さをそろえる（見出しは上、入力欄は下に寄せる） */
+  .row2 > .field { display: flex; flex-direction: column; }
+  .row2 > .field > input, .row2 > .field > select { margin-top: auto; }
   @media (max-width: 600px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
   label, .lbl { display: block; font-size: 15px; font-weight: 700; line-height: 1.6; margin-bottom: 6px; }
   .req { display: inline-block; margin-left: 8px; padding: 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; line-height: 1.7; color: var(--accent); background: var(--accent-soft); border-radius: 3px; vertical-align: 1px; }
