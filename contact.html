@@ -73,6 +73,13 @@
   input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); border-radius: 4px; }
   [aria-invalid="true"] { border-color: var(--error); box-shadow: inset 3px 0 0 var(--error); }
   .counter { margin-top: 6px; font-size: 12px; color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+  /* 2択（お使いのOS）: ラジオボタンを横並び */
+  .choices { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+  .choice { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; margin: 0; padding: 0 18px 0 14px; font-weight: 500; background: var(--surface); border: 1px solid var(--field-line); border-radius: 4px; cursor: pointer; transition: border-color 150ms linear, background-color 150ms linear; }
+  .choice:hover { border-color: var(--ink-2); }
+  .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .choice input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+  .choice:has(input:disabled) { cursor: default; }
   .err { margin-top: 6px; font-size: 13px; font-weight: 700; line-height: 1.7; color: var(--error); }
   .err:empty { margin: 0; }
   .group { margin-top: 28px; padding: 20px 20px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
@@ -127,7 +134,7 @@
   .colophon { max-width: 760px; margin: 0 auto; padding: 28px 24px 56px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
   .colophon a { color: var(--ink-2); }
   .colophon .mark { font-weight: 900; color: var(--ink); }
-  @media (prefers-reduced-motion: reduce) { input, select, textarea, .btn, input[type="file"]::file-selector-button { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { input, select, textarea, .btn, .choice, input[type="file"]::file-selector-button { transition: none; } }
 </style>
 </head>
 <body>
@@ -184,6 +191,15 @@
       <p class="group-title" id="g-env-title">お使いの環境</p>
       <p class="group-lead">すべて任意です。わかる範囲でご記入ください。</p>
 
+      <div class="field">
+        <p class="lbl" id="l-os">お使いのOS</p>
+        <div class="choices" role="radiogroup" aria-labelledby="l-os" aria-describedby="e-os">
+          <label class="choice"><input type="radio" name="os" value="mac" checked disabled />Mac</label>
+          <label class="choice"><input type="radio" name="os" value="windows" disabled />Windows</label>
+        </div>
+        <p class="err" id="e-os" aria-live="polite"></p>
+      </div>
+
       <div class="row2">
         <div class="field">
           <label for="f-app_version">アプリの版</label>
@@ -192,18 +208,18 @@
           <p class="err" id="e-app_version" aria-live="polite"></p>
         </div>
         <div class="field">
-          <label for="f-macos_version">macOSの版</label>
-          <p class="hint" id="h-macos_version">例: 15.1</p>
-          <input type="text" id="f-macos_version" name="macos_version" maxlength="50" autocomplete="off" aria-describedby="h-macos_version e-macos_version" disabled />
-          <p class="err" id="e-macos_version" aria-live="polite"></p>
+          <label for="f-os_version" id="l-os_version">macOSの版</label>
+          <p class="hint" id="h-os_version">例: 15.1</p>
+          <input type="text" id="f-os_version" name="os_version" maxlength="50" autocomplete="off" aria-describedby="h-os_version e-os_version" disabled />
+          <p class="err" id="e-os_version" aria-live="polite"></p>
         </div>
       </div>
 
       <div class="field">
-        <label for="f-mac_model">Macの機種</label>
-        <p class="hint" id="h-mac_model">例: MacBook Pro 14インチ M3</p>
-        <input type="text" id="f-mac_model" name="mac_model" maxlength="100" autocomplete="off" aria-describedby="h-mac_model e-mac_model" disabled />
-        <p class="err" id="e-mac_model" aria-live="polite"></p>
+        <label for="f-pc_model" id="l-pc_model">Macの機種</label>
+        <p class="hint" id="h-pc_model">例: MacBook Pro 14インチ M3</p>
+        <input type="text" id="f-pc_model" name="pc_model" maxlength="100" autocomplete="off" aria-describedby="h-pc_model e-pc_model" disabled />
+        <p class="err" id="e-pc_model" aria-live="polite"></p>
       </div>
 
       <div class="row2">
@@ -313,16 +329,30 @@
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // 画面に出す順（検証・フォーカス移動の順番）
-  var ORDER = ["category", "name", "email", "purchase_email", "app_version", "macos_version", "mac_model",
+  var ORDER = ["category", "name", "email", "purchase_email", "os", "app_version", "os_version", "pc_model",
     "editor", "editor_version", "camera_card", "message", "screenshots", "privacy_agree"];
   var LABEL = {
     category: "お問い合わせの種類", name: "お名前", email: "メールアドレス", purchase_email: "購入時のメールアドレス",
-    app_version: "アプリの版", macos_version: "macOSの版", mac_model: "Macの機種", editor: "お使いの編集ソフト",
+    os: "お使いのOS", app_version: "アプリの版", os_version: "macOSの版", pc_model: "Macの機種", editor: "お使いの編集ソフト",
     editor_version: "編集ソフトの版", camera_card: "カメラとカード", message: "お問い合わせ内容",
     screenshots: "スクリーンショット", privacy_agree: "プライバシーポリシーへの同意"
   };
-  var MAXLEN = { name: 100, email: 254, purchase_email: 254, app_version: 50, macos_version: 50,
-    mac_model: 100, editor_version: 50, camera_card: 300, message: 5000 };
+  var MAXLEN = { name: 100, email: 254, purchase_email: 254, app_version: 50, os_version: 50,
+    pc_model: 100, editor_version: 50, camera_card: 300, message: 5000 };
+
+  // OS ごとの見出しと説明（入力欄の name は共通）
+  var OS_TEXT = {
+    mac: {
+      os_version: "macOSの版", os_version_hint: "例: 15.1",
+      pc_model: "Macの機種", pc_model_hint: "例: MacBook Pro 14インチ M3",
+      app_version_hint: "例: 1.0.0。アプリケーションフォルダの CurtainCall を選んで ⌘I（情報を見る）で確認できます。"
+    },
+    windows: {
+      os_version: "Windowsの版", os_version_hint: "例: Windows 11 24H2",
+      pc_model: "パソコンの機種", pc_model_hint: "例: Dell XPS 15",
+      app_version_hint: "例: 1.0.0。Windowsの［設定］→［アプリ］→［インストールされているアプリ］で CurtainCall の下に表示されます。"
+    }
+  };
 
   var files = [];
   var sending = false;
@@ -364,9 +394,37 @@
   }
   field("category").addEventListener("change", updateCategory);
 
-  var qType = new URLSearchParams(location.search).get("type");
+  // ---- OS による見出し・説明の切り替え ----
+  var osRadios = form.querySelectorAll('input[name="os"]');
+  function currentOs() {
+    var c = form.querySelector('input[name="os"]:checked');
+    return c && OS_TEXT[c.value] ? c.value : "mac";
+  }
+  function setOs(os) {
+    Array.prototype.forEach.call(osRadios, function (r) { r.checked = r.value === os; });
+  }
+  function updateOs() {
+    var t = OS_TEXT[currentOs()];
+    document.getElementById("l-os_version").textContent = t.os_version;
+    document.getElementById("h-os_version").textContent = t.os_version_hint;
+    document.getElementById("l-pc_model").textContent = t.pc_model;
+    document.getElementById("h-pc_model").textContent = t.pc_model_hint;
+    document.getElementById("h-app_version").textContent = t.app_version_hint;
+    LABEL.os_version = t.os_version;
+    LABEL.pc_model = t.pc_model;
+  }
+  Array.prototype.forEach.call(osRadios, function (r) { r.addEventListener("change", updateOs); });
+
+  var params = new URLSearchParams(location.search);
+  var qType = params.get("type");
   if (qType && CATEGORIES.indexOf(qType) >= 0) field("category").value = qType;
+  var qOs = (params.get("os") || "").toLowerCase();
+  if (qOs === "windows" || qOs === "win") setOs("windows");
+  else if (qOs === "mac") setOs("mac");
   updateCategory();
+  updateOs();
+  // 戻る操作などでブラウザが選択を復元したときも、見出しを合わせる
+  window.addEventListener("pageshow", updateOs);
 
   // ---- 文字数カウンタ ----
   function updateCount() { counter.textContent = msgArea.value.length + " / 5000"; }
