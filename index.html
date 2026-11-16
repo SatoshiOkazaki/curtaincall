@@ -415,6 +415,29 @@
   /* スマホでは価格表の下のボタンを横幅いっぱいに（300px 固定だと右に中途半端な余白が残る） */
   @media (max-width: 600px) { .buy-box .buy-btn { display: flex; } }
   .price-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  /* ---------- ダウンロード：価格表と同じ2列の組み。各OSに版番号・条件・入手ボタン、その下に更新履歴 ---------- */
+  .dl-lead { padding-bottom: 20px; font-size: 14px; letter-spacing: .04em; line-height: 1.9; color: var(--ink-2); max-width: 36em; }
+  .dl .price-row dd { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .dl-ver { line-height: 1.6; }
+  .dl-ver b { font-size: 18px; font-weight: 700; font-feature-settings: "tnum"; }
+  .dl-ver span { margin-left: .8em; font-size: 13px; color: var(--ink-2); font-feature-settings: "tnum"; }
+  .dl-btn { margin-top: 12px; min-height: 48px; min-width: min(260px, 100%); justify-content: center; font-size: 15px; }
+  .dl-log-title {
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    color: var(--ink-2);
+  }
+  .dl-log { list-style: none; margin-top: 8px; }
+  .dl-log li { padding: 14px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; letter-spacing: .04em; line-height: 1.8; }
+  .dl-log li:last-child { border-bottom: none; }
+  .dl-log-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+  .dl-log-head time { font-size: 13px; color: var(--ink-2); font-feature-settings: "tnum"; }
+  .dl-log-head b { font-weight: 700; font-feature-settings: "tnum"; }
+  .dl-tag { font-size: 12px; color: var(--ink-2); }
+  @media (max-width: 600px) { .dl-btn { align-self: stretch; } }
   /* 支払い・引き渡し・返品の条件は別ページ。表の最後の行と同じ間隔で小さく添える */
   .price-legal {
     padding-top: 20px;
@@ -644,10 +667,44 @@
   </div>
 </section>
 
+<section id="download">
+  <div class="wrap split">
+    <div class="sec-head">
+      <div class="sec-label"><span class="sec-num">06</span><span class="kicker">DOWNLOAD</span></div>
+      <h2>ダウンロード</h2>
+    </div>
+    <div class="dl-body">
+      <p class="dl-lead">ご購入後の再インストールやアップデートは、ここから最新版を入手できます。1.x のアップデートは、お持ちのライセンスキーのまま無償でお使いいただけます。</p>
+      <!--
+        Mac版のリンクは GitHub Releases の「最新リリース」を指すので、新しい版を公開すれば自動でその版になる。
+        版番号と日付は手書き。リリースを出したら、下の版番号と更新履歴を書き足す。
+      -->
+      <dl class="price dl">
+        <div class="price-row"><dt>MAC</dt><dd>
+          <p class="dl-ver">最新版 <b>1.0.1</b><span>2026年11月16日</span></p>
+          <p class="price-sub">Apple Silicon 搭載の Mac（macOS 11 以降）</p>
+          <a class="btn btn-outline dl-btn" href="https://github.com/SatoshiOkazaki/curtaincall/releases/latest/download/CurtainCall-mac.dmg">Mac版をダウンロード</a>
+        </dd></div>
+        <div class="price-row"><dt>WINDOWS</dt><dd>
+          <p class="dl-ver">最新版 <b>1.0.0</b><span>2026年11月13日</span></p>
+          <p class="price-sub">Windows 10（1809 以降）／11（64ビット）。アップデートは Microsoft Store から自動で届きます</p>
+          <a class="btn btn-outline dl-btn" href="https://apps.microsoft.com/detail/9PGSXPFB8BMP">Microsoft Store で開く</a>
+        </dd></div>
+      </dl>
+      <h3 class="dl-log-title">更新履歴</h3>
+      <ol class="dl-log">
+        <li><p class="dl-log-head"><time datetime="2026-11-16">2026.11.16</time><b>1.0.1</b><span class="dl-tag">Mac版</span></p><p>Sony の CFexpress Type A（FX3 など）からの取り込みに対応しました。</p></li>
+        <li><p class="dl-log-head"><time datetime="2026-11-13">2026.11.13</time><b>1.0.0</b><span class="dl-tag">Windows版</span></p><p>Microsoft Store で公開しました。</p></li>
+        <li><p class="dl-log-head"><time datetime="2026-10-18">2026.10.18</time><b>1.0.0</b><span class="dl-tag">Mac版</span></p><p>発売しました。</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <footer class="site-foot">
   <div class="wrap">
     <span class="mark">CurtainCall</span>
-    <span><a href="tokushoho.html">特定商取引法に基づく表記</a>　<a href="terms.html">利用規約</a>　<a href="privacy.html">プライバシーポリシー</a>　<a href="contact.html">お問い合わせ</a></span>
+    <span><a href="#download">ダウンロード</a>　<a href="tokushoho.html">特定商取引法に基づく表記</a>　<a href="terms.html">利用規約</a>　<a href="privacy.html">プライバシーポリシー</a>　<a href="contact.html">お問い合わせ</a></span>
     <span>Zmotions 岡崎 聡</span>
   </div>
 </footer>
