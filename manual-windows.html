@@ -585,7 +585,7 @@
     <h1>CurtainCall</h1>
     <p class="cover-sub"><span class="nobr">メディアを挿すだけで、</span><span class="nobr">コピー・検証から</span><span class="nobr">編集ソフトへの取り込みまで。</span></p>
     <div class="cover-meta">
-      <span>バージョン <b>1.0.1</b></span>
+      <span>バージョン <b>1.1.0</b></span>
       <span>発行 <b>Zmotions 岡崎 聡</b></span>
     </div>
   </div>
@@ -604,6 +604,7 @@
       <li><a href="#import">6　編集ソフトへ</a></li>
       <li class="sub"><a href="#editor">DaVinciの初期設定</a></li>
       <li class="sub"><a href="#premiere">Premiereの初期設定</a></li>
+      <li class="sub"><a href="#edius">EDIUSで使う</a></li>
       <li><a href="#settings">7　設定</a></li>
       <li><a href="#help">8　困ったとき</a></li>
     </ol>
@@ -829,13 +830,40 @@
         </li>
       </ol>
 
+      <h3 id="edius">EDIUS で使う</h3>
+      <p class="dg-ex">対応：EDIUS 11（日本語版）で確認しています</p>
+      <ol class="steps">
+        <li>
+          <div class="step-title">CurtainCall の［設定］で EDIUS を選ぶ</div>
+          <p class="note">EDIUS 側の設定や、パネルのインストールは不要です。</p>
+        </li>
+        <li>
+          <div class="step-title">EDIUS を起動して、プロジェクトを開いておく</div>
+          <p class="note">素材とタイムラインは、開いているプロジェクトに追加されます。</p>
+        </li>
+      </ol>
+      <dl class="qa">
+        <div>
+          <dt>取り込み中の動き</dt>
+          <dd>［EDIUSへ取り込み］を押すと EDIUS が手前に出て、数秒で自動的に取り込みます。終わるまで、マウスやキーボードは操作しないでください。</dd>
+        </div>
+        <div>
+          <dt>タイムラインのフレームレート</dt>
+          <dd>EDIUS のプロジェクトのフレームレートで作ります。フレームレートの違う素材（例：29.97p と 59.94p）も1本のタイムラインに並べ、EDIUS が再生時に変換します。</dd>
+        </div>
+        <div>
+          <dt>結果の通知</dt>
+          <dd>タイムラインを作れなかった・送れないファイルがあった、などの注意があるときは、クリックするまで消えないオレンジの通知で知らせます。見つからないファイルや長さを読み取れないファイルは送らず、<span class="state pend">未取込</span>のまま残します。</dd>
+        </div>
+      </dl>
+
       <h3>取り込む</h3>
       <ol class="steps" style="counter-reset: step 1">
         <li>
-          <div class="step-title">編集ソフト（DaVinci Resolve/Premiere Pro）でプロジェクトを開く</div>
+          <div class="step-title">編集ソフト（DaVinci Resolve/Premiere Pro/EDIUS）でプロジェクトを開く</div>
         </li>
         <li>
-          <div class="step-title">アプリ本体またはオーバーレイウィンドウで［DaVinci Resolve/Premiereへ取り込み］を押す</div>
+          <div class="step-title">アプリ本体またはオーバーレイウィンドウで［DaVinci Resolve/Premiere/EDIUSへ取り込み］を押す</div>
           <p class="note">ボタンの数字は、まだ送っていないクリップの数です。<span class="state pend">未取込</span>の分をまとめて送ります。</p>
           <figure class="fig">
             <div class="anno">
@@ -968,6 +996,14 @@
           <dd><a href="#editor">初期設定</a>を確認してください。アプリを更新したあとは、Premiere を再起動してください。</dd>
         </div>
         <div>
+          <dt>EDIUS に取り込めない</dt>
+          <dd>「EDIUSが起動していません」と出たら、EDIUS を起動してプロジェクトを開いてから、もう一度押してください。EDIUS 11（日本語版）以外では、取り込みが動かないことがあります。</dd>
+        </div>
+        <div>
+          <dt>EDIUS で同じクリップが2つ入った</dt>
+          <dd>ビンに同じ名前のフォルダがあると、そのフォルダに追加されます。同じ素材を同じプロジェクトにもう一度送ると、クリップが重複します。</dd>
+        </div>
+        <div>
           <dt>Premiere に CurtainCall が出ない</dt>
           <dd>Premiere を再起動してください。それでも出なければ、CurtainCall の［再インストール］を押してから、もう一度再起動してください。</dd>
         </div>
@@ -1015,7 +1051,7 @@
 
 <footer class="colophon">
   <span class="mark">CurtainCall</span>
-  <span>取扱説明書（Windows版） — バージョン 1.0.1　<a href="manual.html">取扱説明書トップ</a></span>
+  <span>取扱説明書（Windows版） — バージョン 1.1.0　<a href="manual.html">取扱説明書トップ</a></span>
   <span><a href="tokushoho.html">特定商取引法に基づく表記</a>　<a href="terms.html">利用規約</a>　<a href="privacy.html">プライバシーポリシー</a>　<a href="contact.html?os=windows">お問い合わせ</a></span>
   <span>Zmotions 岡崎 聡</span>
 </footer>
