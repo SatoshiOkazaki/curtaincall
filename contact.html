@@ -229,7 +229,8 @@
             <option value="">選択してください</option>
             <option value="resolve">DaVinci Resolve Studio</option>
             <option value="premiere">Premiere Pro</option>
-            <option value="both">両方</option>
+            <option value="edius">EDIUS</option>
+            <option value="both">複数</option>
             <option value="none">使っていない</option>
           </select>
           <p class="err" id="e-editor" aria-live="polite"></p>
@@ -325,7 +326,7 @@
   var TYPES = ["image/png", "image/jpeg", "image/webp", "image/heic", "image/heif", "image/gif"];
   var EXT = /\.(png|jpe?g|webp|heic|heif|gif)$/i;
   var CATEGORIES = ["bug", "license", "purchase", "other"];
-  var EDITORS = ["", "resolve", "premiere", "both", "none"];
+  var EDITORS = ["", "resolve", "premiere", "edius", "both", "none"];
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // 画面に出す順（検証・フォーカス移動の順番）
