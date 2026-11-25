@@ -723,6 +723,79 @@
 
 <script>
 /*
+  流入元の記録。URL の utm_source / utm_medium / utm_campaign と、参照元のホスト名を、
+  購入リンクに ?src=&med=&cmp=&ref= として付ける（値があるものだけ。小文字の [a-z0-9._-]・40字以内のみ）。
+  同じ訪問の最初の流入元を sessionStorage（cc_attr）に保存し、URL に新しい utm_source が付いたときだけ上書き。
+  JS無効・sessionStorage不可でも購入リンクは素の /buy のまま動く。
+*/
+(function () {
+  "use strict";
+
+  var KEY = "cc_attr";
+  var OK = /^[a-z0-9._-]{1,40}$/;
+  var SELF = ["curtaincall.zmotions.net", "buy.zmotions.net"];
+
+  function clean(v) {
+    if (typeof v !== "string") return "";
+    v = v.toLowerCase();
+    return OK.test(v) ? v : "";
+  }
+  function refHost(r) {
+    try {
+      var h = new URL(r).hostname.toLowerCase();
+      return SELF.indexOf(h) >= 0 ? "" : clean(h);
+    } catch (e) { return ""; }
+  }
+  function fromUrl(search, referrer) {
+    var q = null;
+    try { q = new URLSearchParams(search); } catch (e) {}
+    var get = function (k) { return q ? clean(q.get(k) || "") : ""; };
+    return { src: get("utm_source"), med: get("utm_medium"), cmp: get("utm_campaign"), ref: referrer ? refHost(referrer) : "" };
+  }
+  function load() {
+    try {
+      var o = JSON.parse(sessionStorage.getItem(KEY) || "null");
+      if (o && typeof o === "object") return { src: clean(o.src), med: clean(o.med), cmp: clean(o.cmp), ref: clean(o.ref) };
+    } catch (e) {}
+    return null;
+  }
+  function save(o) { try { sessionStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+
+  /* 最初の流入元を保存して使い続ける。URL に新たに utm_source が付いて来たときだけ上書き */
+  function resolve(search, referrer, stored) {
+    var cur = fromUrl(search, referrer);
+    if (cur.src || !stored) return { attr: cur, store: true };
+    return { attr: stored, store: false };
+  }
+  function addQuery(base, a) {
+    var p = [];
+    ["src", "med", "cmp", "ref"].forEach(function (k) {
+      if (a[k]) p.push(k + "=" + encodeURIComponent(a[k]));
+    });
+    return p.length ? base + (base.indexOf("?") < 0 ? "?" : "&") + p.join("&") : base;
+  }
+
+  var attr = { src: "", med: "", cmp: "", ref: "" };
+  try {
+    var r = resolve(location.search, document.referrer, load());
+    attr = r.attr;
+    if (r.store) save(attr);
+  } catch (e) {}
+
+  /* 価格まわりのスクリプトが href を書き換えるときもこれを通す */
+  window.ccBuyUrl = function (base) { return addQuery(base, attr); };
+
+  try {
+    var btns = document.querySelectorAll("[data-buy]");
+    for (var i = 0; i < btns.length; i++) {
+      var h = btns[i].getAttribute("href");
+      if (h) btns[i].setAttribute("href", window.ccBuyUrl(h));
+    }
+  } catch (e) {}
+})();
+</script>
+<script>
+/*
   購入ボタンと価格まわりの文言を、購入サーバーの /price（JSON）で出し分ける。
     phase: prelaunch | early | regular | unavailable
   ・価格そのものはサーバー（/buy）が決める。ここで出す 3,980円 / 5,980円 は表示用の固定値で、決済額には影響しない。
@@ -785,7 +858,7 @@
       var a = buyBtns[i];
       a.textContent = label;
       if (enabled) {
-        a.setAttribute("href", BUY_URL);
+        a.setAttribute("href", typeof window.ccBuyUrl === "function" ? window.ccBuyUrl(BUY_URL) : BUY_URL);
         a.removeAttribute("aria-disabled");
         a.removeAttribute("role");
       } else {
